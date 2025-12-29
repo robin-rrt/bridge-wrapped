@@ -80,10 +80,6 @@ export class LiFiAdapter implements BridgeProviderAdapter {
     url.searchParams.set('wallet', address);
 
     // LiFi uses milliseconds for timestamps
-    // Cap end timestamp to current time if it's in the future
-    const now = Math.floor(Date.now() / 1000);
-    const cappedEndTimestamp = Math.min(endTimestamp, now);
-
     url.searchParams.set('fromTimestamp', (startTimestamp).toString());
 
     if (cursor) {
@@ -103,7 +99,7 @@ export class LiFiAdapter implements BridgeProviderAdapter {
     }
 
     const data = await response.json();
-    console.log('LiFi API Response:', JSON.stringify(data, null, 2));
+    //console.log('LiFi API Response:', JSON.stringify(data, null, 2));
 
     return data;
   }

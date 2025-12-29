@@ -65,7 +65,7 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
           transition={{ delay: 1.7 }}
         >
           <p className="text-white text-lg md:text-xl mb-3 leading-relaxed">
-            💡 You could've reduced multiple bridging by{' '}
+            💡 You could&apos;ve reduced multiple bridging by{' '}
             <span className="font-bold text-white text-2xl md:text-3xl">90%</span>
           </p>
           <p className="text-white/80 text-base md:text-lg mb-3">

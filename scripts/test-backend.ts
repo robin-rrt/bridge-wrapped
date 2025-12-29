@@ -370,8 +370,10 @@ async function testAPIEndpoint() {
     printInfo('Status', response.status);
     printInfo('Content-Type', response.headers.get('content-type') || 'unknown');
     printInfo('Response Size', `${JSON.stringify(stats).length} bytes`);
-    printInfo('Total Bridges', formatNumber(stats.totalBridgingActions));
-    printInfo('Total Volume', formatUSD(stats.totalVolumeUSD));
+    if (stats) {
+      printInfo('Total Bridges', formatNumber(stats.totalBridgingActions));
+      printInfo('Total Volume', formatUSD(stats.totalVolumeUSD));
+    }
 
   } catch (err) {
     error = err as Error;

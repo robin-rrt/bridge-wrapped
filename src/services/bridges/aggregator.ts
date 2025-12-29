@@ -471,7 +471,7 @@ export class BridgeAggregator {
       .slice(0, n);
 
     // Fetch all token logos in parallel
-    const addresses = sorted.map(([_, data]) => data.address);
+    const addresses = sorted.map(([, data]) => data.address);
     const tokenInfoMap = await coinMarketCapService.getMultipleTokenInfo(addresses);
 
     return sorted.map(([symbol, data]) => ({
