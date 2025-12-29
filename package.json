@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "NEXT_DISABLE_TURBOPACK=1 next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:backend": "tsx scripts/test-backend.ts"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.10",
@@ -30,6 +31,7 @@
     "eslint-config-next": "16.0.10",
     "null-loader": "^4.0.1",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }

@@ -12,6 +12,7 @@ import {
   isWithinYear,
 } from '@/lib/utils';
 import type { BridgeProviderAdapter } from './types';
+import { coinMarketCapService } from '@/services/tokens/coinmarketcap';
 
 export class RelayAdapter implements BridgeProviderAdapter {
   readonly name = 'relay' as const;
@@ -39,7 +40,7 @@ export class RelayAdapter implements BridgeProviderAdapter {
         }
 
         for (const request of response.requests) {
-          const normalized = this.normalizeRequest(request);
+          const normalized = await this.normalizeRequest(request);
           if (!normalized) continue;
 
           // Check if within time range
@@ -81,10 +82,12 @@ export class RelayAdapter implements BridgeProviderAdapter {
   ): Promise<RelayRequestsResponse> {
     const url = new URL(`${this.baseUrl}/requests/v2`);
     url.searchParams.set('user', address);
-    url.searchParams.set('limit', PAGINATION.RELAY_LIMIT.toString());
+    // url.searchParams.set('limit', PAGINATION.RELAY_LIMIT.toString());
     if (continuation) {
       url.searchParams.set('continuation', continuation);
     }
+
+    console.log('Relay URL:', url.toString());
 
     const response = await fetch(url.toString(), {
       headers: {
@@ -96,41 +99,80 @@ export class RelayAdapter implements BridgeProviderAdapter {
       throw new Error(`Relay API error: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    // Uncomment to debug API responses:
+    // console.log('Relay API Response:', JSON.stringify(data, null, 2));
+
+    return data;
   }
 
-  private normalizeRequest(
+  private async normalizeRequest(
     request: RelayRequest
-  ): NormalizedBridgeTransaction | null {
+  ): Promise<NormalizedBridgeTransaction | null> {
     try {
-      // Parse timestamp from createdAt
-      const timestamp = Math.floor(new Date(request.createdAt).getTime() / 1000);
-      if (!timestamp || isNaN(timestamp)) return null;
+      // Parse timestamp from createdAt or use inTxs timestamp
+      const timestampStr = request.createdAt || request.data.inTxs?.[0]?.timestamp;
+      if (!timestampStr) return null;
 
-      // Get token info
-      const tokenSymbol =
-        request.data.currencyObject?.symbol ||
-        this.extractSymbolFromCurrency(request.data.currency);
-      const tokenDecimals = request.data.currencyObject?.decimals || 18;
-      const tokenAddress =
-        request.data.currencyObject?.address ||
-        request.data.currency ||
-        '0x0000000000000000000000000000000000000000';
+      const timestamp = typeof timestampStr === 'number'
+        ? timestampStr
+        : Math.floor(new Date(timestampStr).getTime() / 1000);
+      if (isNaN(timestamp)) return null;
 
-      // Calculate amounts
-      const amountFormatted = request.data.amountFormatted
-        ? parseFloat(request.data.amountFormatted)
-        : parseTokenAmount(request.data.amount, tokenDecimals);
+      // Extract chain IDs from inTxs and outTxs
+      const originChainId = request.data.inTxs?.[0]?.chainId;
+      const destinationChainId = request.data.outTxs?.[0]?.chainId;
 
-      const amountUSD = request.data.amountUsd
-        ? parseFloat(request.data.amountUsd)
+      if (!originChainId || !destinationChainId) {
+        console.warn('Missing chain IDs in Relay request:', request.id);
+        return null;
+      }
+
+      // Get token info from metadata or feeCurrencyObject
+      const currencyIn = request.data.metadata?.currencyIn;
+      const tokenAddress = currencyIn?.currency?.address ||
+                          request.data.feeCurrencyObject?.address ||
+                          '0x0000000000000000000000000000000000000000';
+
+      // Get token info from CoinMarketCap API
+      const tokenInfo = await coinMarketCapService.getTokenInfo(tokenAddress);
+
+      // Fallback to API response if CoinMarketCap doesn't have the data
+      const tokenSymbol = tokenInfo?.symbol ||
+                         currencyIn?.currency?.symbol ||
+                         request.data.feeCurrencyObject?.symbol ||
+                         tokenAddress;
+
+      const tokenDecimals = tokenInfo?.decimals ||
+                           currencyIn?.currency?.decimals ||
+                           request.data.feeCurrencyObject?.decimals ||
+                           18;
+
+      // Calculate amounts - use metadata if available
+      const amountFormatted = currencyIn?.amountFormatted
+        ? parseFloat(currencyIn.amountFormatted)
+        : parseTokenAmount(currencyIn?.amount || '0', tokenDecimals);
+
+      // Use provided USD amount directly (already calculated by Relay API)
+      const amountUSD = currencyIn?.amountUsd
+        ? parseFloat(currencyIn.amountUsd)
         : 0;
 
+      // Debug logging for high values
+      if (amountUSD > 100000) {
+        console.log('[Relay] High value detected:', {
+          symbol: tokenSymbol,
+          amount: currencyIn?.amount,
+          decimals: tokenDecimals,
+          amountFormatted,
+          amountUSD,
+          providedUSD: currencyIn?.amountUsd,
+          requestId: request.id
+        });
+      }
+
       // Get transaction hash
-      const txHash =
-        request.data.inTxHashes?.[0] ||
-        request.data.outTxHashes?.[0] ||
-        request.id;
+      const txHash = request.data.inTxs?.[0]?.hash || request.id;
 
       // Map status
       let status: 'pending' | 'completed' | 'failed' = 'pending';
@@ -149,19 +191,19 @@ export class RelayAdapter implements BridgeProviderAdapter {
         id: generateTxId(
           this.name,
           txHash,
-          request.originChainId,
-          request.destinationChainId
+          originChainId,
+          destinationChainId
         ),
         provider: this.name,
         txHash,
         timestamp,
-        sourceChainId: request.originChainId,
-        sourceChainName: getChainName(request.originChainId),
-        destinationChainId: request.destinationChainId,
-        destinationChainName: getChainName(request.destinationChainId),
+        sourceChainId: originChainId,
+        sourceChainName: getChainName(originChainId),
+        destinationChainId: destinationChainId,
+        destinationChainName: getChainName(destinationChainId),
         tokenSymbol,
         tokenAddress,
-        amount: request.data.amount,
+        amount: currencyIn?.amount || '0',
         amountFormatted,
         amountUSD,
         status,
@@ -172,15 +214,6 @@ export class RelayAdapter implements BridgeProviderAdapter {
     }
   }
 
-  private extractSymbolFromCurrency(currency: string): string {
-    // Try to extract symbol from currency string (could be address or symbol)
-    if (!currency) return 'Unknown';
-    if (currency.startsWith('0x')) {
-      // It's an address, return Unknown
-      return 'Unknown';
-    }
-    return currency.toUpperCase();
-  }
 }
 
 // Export singleton instance

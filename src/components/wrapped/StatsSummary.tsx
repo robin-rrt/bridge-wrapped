@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   BarChart,
   Bar,
@@ -15,6 +16,7 @@ import {
 import type { BridgeWrappedStats } from '@/types';
 import { formatNumber, formatUSD, truncateAddress, formatDate } from '@/lib/utils';
 import { getChainColor } from '@/services/chains/chainInfo';
+import { classifyUser } from '@/lib/userClassification';
 
 interface StatsSummaryProps {
   stats: BridgeWrappedStats;
@@ -22,6 +24,9 @@ interface StatsSummaryProps {
 }
 
 export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
+  // Calculate user class
+  const userClass = classifyUser(stats.transactions, stats.totalVolumeUSD);
+
   // Prepare chart data
   const monthlyData = stats.monthlyActivity.map((m) => ({
     name: m.monthName.substring(0, 3),
@@ -43,14 +48,14 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-6xl mx-auto flex flex-col items-center">
         {/* Header */}
         <motion.div
-          className="text-center mb-12"
+          className="text-center mb-8"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-2xl font-bold text-white mb-2">
             Bridge Wrapped {stats.year}
           </h1>
           <p className="text-white/60">
@@ -64,59 +69,91 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </button>
         </motion.div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <p className="text-white/60 text-sm mb-1">Total Bridges</p>
-            <p className="text-3xl font-bold text-white">
-              {formatNumber(stats.totalBridgingActions)}
-            </p>
-          </motion.div>
+        {/* User Class Card - With breathing room */}
+        <motion.div
+          className="flex justify-center mb-16"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="relative bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-0.5 rounded-2xl shadow-2xl max-w-lg w-full">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-6 p-6">
+                {/* Class Image */}
+                <div className="relative w-20 h-20 flex-shrink-0">
+                  <Image
+                    src={userClass.image}
+                    alt={userClass.title}
+                    fill
+                    className="object-contain drop-shadow-lg"
+                  />
+                </div>
+                {/* Class Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-white/60 uppercase tracking-wide mb-1">
+                    Your Cross-chain Class
+                  </p>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                    {userClass.title}
+                  </h3>
+                  <p className="text-white/70 text-sm line-clamp-2">
+                    {userClass.description.split('.')[0]}.
+                  </p>
+                </div>
+                {/* Stars */}
+                <div className="flex flex-col gap-0.5">
+                  {[...Array(userClass.rarity)].map((_, i) => (
+                    <span
+                      key={i}
+                      className="text-yellow-400 text-sm"
+                    >★</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <p className="text-white/60 text-sm mb-1">Total Volume</p>
-            <p className="text-3xl font-bold text-white">
-              {formatUSD(stats.totalVolumeUSD)}
-            </p>
-          </motion.div>
+        {/* Stats Table */}
+        <motion.div
+          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="grid grid-cols-2 divide-x divide-white/10">
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Total Bridges</p>
+              <p className="text-3xl md:text-4xl font-bold text-white">
+                {formatNumber(stats.totalBridgingActions)}
+              </p>
+            </div>
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Total Volume</p>
+              <p className="text-3xl md:text-4xl font-bold text-white">
+                {formatUSD(stats.totalVolumeUSD)}
+              </p>
+            </div>
+          </div>
 
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <p className="text-white/60 text-sm mb-1">Top Source Chain</p>
-            <p className="text-2xl font-bold text-white">
-              {stats.mostUsedSourceChain?.chainName || 'N/A'}
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <p className="text-white/60 text-sm mb-1">Top Destination</p>
-            <p className="text-2xl font-bold text-white">
-              {stats.mostUsedDestinationChain?.chainName || 'N/A'}
-            </p>
-          </motion.div>
-        </div>
+          <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Top Source</p>
+              <p className="text-xl md:text-2xl font-semibold text-white">
+                {stats.mostUsedSourceChain?.chainName || 'N/A'}
+              </p>
+            </div>
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Top Destination</p>
+              <p className="text-xl md:text-2xl font-semibold text-white">
+                {stats.mostUsedDestinationChain?.chainName || 'N/A'}
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 px-4">
           {/* Monthly Activity */}
           <motion.div
             className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
@@ -136,8 +173,10 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
                     backgroundColor: '#1e1b4b',
                     border: 'none',
                     borderRadius: '8px',
-                    color: 'white',
+                    color: '#ffffff',
                   }}
+                  labelStyle={{ color: '#ffffff' }}
+                  itemStyle={{ color: '#ffffff' }}
                 />
                 <Bar
                   dataKey="bridges"
@@ -191,52 +230,52 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
                     backgroundColor: '#1e1b4b',
                     border: 'none',
                     borderRadius: '8px',
-                    color: 'white',
+                    color: '#ffffff',
                   }}
+                  labelStyle={{ color: '#ffffff' }}
+                  itemStyle={{ color: '#ffffff' }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </motion.div>
         </div>
 
-        {/* Provider Breakdown & Top Token */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Provider Breakdown */}
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-          >
-            <h3 className="text-lg font-semibold text-white mb-4">
+        {/* Provider Breakdown Table */}
+        <motion.div
+          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <div className="p-4 border-b border-white/10">
+            <h3 className="text-lg font-semibold text-white text-center">
               Bridges by Provider
             </h3>
-            <div className="space-y-4">
-              {providerData.map((provider) => (
-                <div key={provider.name}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-white">{provider.name}</span>
-                    <span className="text-white/60">
-                      {provider.value} bridges
-                    </span>
-                  </div>
-                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{ backgroundColor: provider.color }}
-                      initial={{ width: 0 }}
-                      animate={{
-                        width: `${
-                          (provider.value / stats.totalBridgingActions) * 100
-                        }%`,
-                      }}
-                      transition={{ delay: 0.8, duration: 1 }}
-                    />
-                  </div>
-                </div>
-              ))}
+          </div>
+          <div className="grid grid-cols-3 divide-x divide-white/10">
+            <div className="p-5 text-center">
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-2">ACROSS</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">
+                {stats.providerBreakdown.across.count}
+              </p>
             </div>
-          </motion.div>
+            <div className="p-5 text-center">
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-2">RELAY</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">
+                {stats.providerBreakdown.relay.count}
+              </p>
+            </div>
+            <div className="p-5 text-center">
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-2">LIFI</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">
+                {stats.providerBreakdown.lifi.count}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Top Tokens Section */}
+        <div className="w-full max-w-6xl mb-12 px-4">
 
           {/* Top Tokens */}
           <motion.div
@@ -277,7 +316,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
         {/* Busiest Day */}
         {stats.busiestDay && (
           <motion.div
-            className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
+            className="w-full max-w-4xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.9 }}

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { SlideContainer } from './SlideContainer';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
 import { SLIDE_GRADIENTS, SLIDE_TYPES } from '@/lib/constants';
@@ -14,59 +15,75 @@ interface TopDestinationSlideProps {
 export function TopDestinationSlide({ chain }: TopDestinationSlideProps) {
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.TOP_DESTINATION]}>
-      <motion.p
-        className="text-xl text-white/70 mb-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        Your favorite DESTINATION chain
-      </motion.p>
-
-      <motion.div
-        className="mb-6"
-        initial={{ x: -200, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
-      >
-        <div
-          className="w-32 h-32 mx-auto rounded-full flex items-center justify-center text-5xl font-bold shadow-2xl"
-          style={{ backgroundColor: getChainColor(chain.chainId) }}
+      <div className="space-y-10">
+        <motion.p
+          className="text-xl md:text-2xl text-white/80 font-light"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
         >
-          {chain.chainName.substring(0, 2).toUpperCase()}
-        </div>
-      </motion.div>
+          Your favorite DESTINATION chain
+        </motion.p>
 
-      <motion.h2
-        className="text-5xl md:text-6xl font-bold text-white mb-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        {chain.chainName}
-      </motion.h2>
+        <motion.div
+          className="py-8 flex items-center justify-center"
+          initial={{ x: -200, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
+        >
+          {chain.logo ? (
+            <div className="relative w-32 h-32 md:w-40 md:h-40 p-4">
+              <Image
+                src={chain.logo}
+                alt={chain.chainName}
+                fill
+                className="object-contain drop-shadow-2xl"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div
+              className="w-32 h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center text-5xl md:text-6xl font-bold shadow-2xl"
+              style={{ backgroundColor: getChainColor(chain.chainId) }}
+            >
+              <span className="text-white">
+                {chain.chainName.substring(0, 2).toUpperCase()}
+              </span>
+            </div>
+          )}
+        </motion.div>
 
-      <motion.div
-        className="flex items-center justify-center gap-2 text-white/80"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.1 }}
-      >
-        <AnimatedCounter
-          value={chain.count}
-          className="text-3xl font-semibold text-white"
-        />
-        <span className="text-2xl">bridges received</span>
-      </motion.div>
+        <motion.h2
+          className="text-5xl md:text-7xl font-bold text-white mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          {chain.chainName}
+        </motion.h2>
 
-      <motion.p
-        className="mt-6 text-white/50 text-lg"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-      >
-        {chain.percentage}% of all your bridges went here
-      </motion.p>
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-3 text-white/80"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.1 }}
+        >
+          <AnimatedCounter
+            value={chain.count}
+            className="text-5xl md:text-6xl font-semibold text-white"
+          />
+          <span className="text-2xl md:text-3xl">bridges received</span>
+        </motion.div>
+
+        <motion.p
+          className="text-white/60 text-lg md:text-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+        >
+          {chain.percentage}% of all your bridges went here
+        </motion.p>
+      </div>
     </SlideContainer>
   );
 }

@@ -10,7 +10,10 @@ import { TopDestinationSlide } from './slides/TopDestinationSlide';
 import { VolumeSlide } from './slides/VolumeSlide';
 import { TopTokenSlide } from './slides/TopTokenSlide';
 import { BusiestDaySlide } from './slides/BusiestDaySlide';
+import { UserClassSlide } from './slides/UserClassSlide';
+import { AvailNexusSlide } from './slides/AvailNexusSlide';
 import { SummarySlide } from './slides/SummarySlide';
+import { classifyUser } from '@/lib/userClassification';
 
 interface WrappedContainerProps {
   stats: BridgeWrappedStats;
@@ -25,9 +28,17 @@ type SlideType =
   | 'volume'
   | 'topToken'
   | 'busiestDay'
+  | 'userClass'
+  | 'availNexus'
   | 'summary';
 
 export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
+  // Calculate user class
+  const userClass = classifyUser(stats.transactions, stats.totalVolumeUSD);
+  const avgTransactionVolume = stats.totalBridgingActions > 0
+    ? stats.totalVolumeUSD / stats.totalBridgingActions
+    : 0;
+
   // Build slides array based on available data
   const availableSlides: SlideType[] = ['intro', 'totalBridges'];
 
@@ -46,6 +57,9 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
   if (stats.busiestDay) {
     availableSlides.push('busiestDay');
   }
+  // Add user class slide after stats slides, before Avail Nexus
+  availableSlides.push('userClass');
+  availableSlides.push('availNexus');
   availableSlides.push('summary');
 
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -128,6 +142,17 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
         return stats.busiestDay ? (
           <BusiestDaySlide busiestDay={stats.busiestDay} />
         ) : null;
+      case 'userClass':
+        return (
+          <UserClassSlide
+            userClass={userClass}
+            totalBridges={stats.totalBridgingActions}
+            totalVolumeUSD={stats.totalVolumeUSD}
+            avgTransactionVolume={avgTransactionVolume}
+          />
+        );
+      case 'availNexus':
+        return <AvailNexusSlide />;
       case 'summary':
         return <SummarySlide stats={stats} />;
       default:

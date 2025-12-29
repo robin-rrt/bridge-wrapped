@@ -1,9 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { SlideContainer } from './SlideContainer';
 import { SLIDE_GRADIENTS, SLIDE_TYPES } from '@/lib/constants';
 import { formatNumber, formatUSD, truncateAddress } from '@/lib/utils';
+import { classifyUser } from '@/lib/userClassification';
 import type { BridgeWrappedStats } from '@/types';
 
 interface SummarySlideProps {
@@ -11,6 +13,8 @@ interface SummarySlideProps {
 }
 
 export function SummarySlide({ stats }: SummarySlideProps) {
+  const userClass = classifyUser(stats.transactions, stats.totalVolumeUSD);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -28,121 +32,148 @@ export function SummarySlide({ stats }: SummarySlideProps) {
 
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.SUMMARY]}>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-2">
-          Your {stats.year} Recap
-        </h2>
-        <p className="text-white/50 mb-8">
-          {truncateAddress(stats.walletAddress, 6)}
-        </p>
-      </motion.div>
-
-      <motion.div
-        className="grid grid-cols-2 gap-4 text-left"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
+      <div className="flex flex-col items-center space-y-6 max-w-4xl mx-auto">
+        {/* Header */}
         <motion.div
-          className="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
-          variants={itemVariants}
+          className="text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
         >
-          <p className="text-white/60 text-sm">Total Bridges</p>
-          <p className="text-2xl font-bold text-white">
-            {formatNumber(stats.totalBridgingActions)}
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Your {stats.year} Recap
+          </h2>
+          <p className="text-white/60 text-sm md:text-base">
+            {truncateAddress(stats.walletAddress, 6)}
           </p>
         </motion.div>
 
+        {/* User Class Card - Compact with breathing room */}
         <motion.div
-          className="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
-          variants={itemVariants}
+          className="mb-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
         >
-          <p className="text-white/60 text-sm">Total Volume</p>
-          <p className="text-2xl font-bold text-white">
-            {formatUSD(stats.totalVolumeUSD)}
-          </p>
+          <div className="relative bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-0.5 rounded-xl shadow-xl">
+            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl overflow-hidden">
+              <div className="flex items-center gap-3 px-4 py-3">
+                <div className="relative w-12 h-12 flex-shrink-0 p-1.5">
+                  <Image
+                    src={userClass.image}
+                    alt={userClass.title}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-white/60">Your Class</p>
+                  <h3 className="text-base md:text-lg font-bold text-white truncate">
+                    {userClass.title}
+                  </h3>
+                </div>
+                <div className="flex gap-0.5">
+                  {[...Array(userClass.rarity)].map((_, i) => (
+                    <span key={i} className="text-yellow-400 text-xs">★</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
-        {stats.mostUsedSourceChain && (
-          <motion.div
-            className="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
-            variants={itemVariants}
-          >
-            <p className="text-white/60 text-sm">Top Source</p>
-            <p className="text-xl font-bold text-white">
-              {stats.mostUsedSourceChain.chainName}
-            </p>
-          </motion.div>
-        )}
+        {/* Stats Table */}
+        <motion.div
+          className="w-full bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <div className="grid grid-cols-2 divide-x divide-white/10">
+            <motion.div className="p-4 text-center" variants={itemVariants}>
+              <p className="text-white/60 text-xs mb-1">Total Bridges</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">
+                {formatNumber(stats.totalBridgingActions)}
+              </p>
+            </motion.div>
+            <motion.div className="p-4 text-center" variants={itemVariants}>
+              <p className="text-white/60 text-xs mb-1">Total Volume</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">
+                {formatUSD(stats.totalVolumeUSD)}
+              </p>
+            </motion.div>
+          </div>
 
-        {stats.mostUsedDestinationChain && (
-          <motion.div
-            className="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
-            variants={itemVariants}
-          >
-            <p className="text-white/60 text-sm">Top Destination</p>
-            <p className="text-xl font-bold text-white">
-              {stats.mostUsedDestinationChain.chainName}
-            </p>
-          </motion.div>
-        )}
+          <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
+            {stats.mostUsedSourceChain && (
+              <motion.div className="p-4 text-center" variants={itemVariants}>
+                <p className="text-white/60 text-xs mb-1">Top Source</p>
+                <p className="text-lg md:text-xl font-semibold text-white">
+                  {stats.mostUsedSourceChain.chainName}
+                </p>
+              </motion.div>
+            )}
+            {stats.mostUsedDestinationChain && (
+              <motion.div className="p-4 text-center" variants={itemVariants}>
+                <p className="text-white/60 text-xs mb-1">Top Destination</p>
+                <p className="text-lg md:text-xl font-semibold text-white">
+                  {stats.mostUsedDestinationChain.chainName}
+                </p>
+              </motion.div>
+            )}
+          </div>
 
-        {stats.mostBridgedToken && (
-          <motion.div
-            className="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
-            variants={itemVariants}
-          >
-            <p className="text-white/60 text-sm">Favorite Token</p>
-            <p className="text-xl font-bold text-white">
-              {stats.mostBridgedToken.symbol}
-            </p>
-          </motion.div>
-        )}
+          <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
+            {stats.mostBridgedToken && (
+              <motion.div className="p-4 text-center" variants={itemVariants}>
+                <p className="text-white/60 text-xs mb-1">Favorite Token</p>
+                <p className="text-lg md:text-xl font-semibold text-white">
+                  {stats.mostBridgedToken.symbol.length > 15
+                    ? `${stats.mostBridgedToken.symbol.substring(0, 12)}...`
+                    : stats.mostBridgedToken.symbol}
+                </p>
+              </motion.div>
+            )}
+            {stats.busiestDay && (
+              <motion.div className="p-4 text-center" variants={itemVariants}>
+                <p className="text-white/60 text-xs mb-1">Busiest Day</p>
+                <p className="text-lg md:text-xl font-semibold text-white">
+                  {stats.busiestDay.count} bridges
+                </p>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
 
-        {stats.busiestDay && (
-          <motion.div
-            className="bg-white/10 rounded-xl p-4 backdrop-blur-sm"
-            variants={itemVariants}
-          >
-            <p className="text-white/60 text-sm">Busiest Day</p>
-            <p className="text-xl font-bold text-white">
-              {stats.busiestDay.count} bridges
-            </p>
-          </motion.div>
-        )}
-      </motion.div>
-
-      <motion.div
-        className="mt-8 flex flex-wrap justify-center gap-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        <div className="text-center px-4">
-          <p className="text-white/50 text-xs uppercase tracking-wide">
-            Across
-          </p>
-          <p className="text-white font-semibold">
-            {stats.providerBreakdown.across.count} bridges
-          </p>
-        </div>
-        <div className="text-center px-4">
-          <p className="text-white/50 text-xs uppercase tracking-wide">Relay</p>
-          <p className="text-white font-semibold">
-            {stats.providerBreakdown.relay.count} bridges
-          </p>
-        </div>
-        <div className="text-center px-4">
-          <p className="text-white/50 text-xs uppercase tracking-wide">LiFi</p>
-          <p className="text-white font-semibold">
-            {stats.providerBreakdown.lifi.count} bridges
-          </p>
-        </div>
-      </motion.div>
+        {/* Bridge Providers Table */}
+        <motion.div
+          className="w-full bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          <div className="grid grid-cols-3 divide-x divide-white/10">
+            <div className="p-3 text-center">
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-1">ACROSS</p>
+              <p className="text-xl md:text-2xl font-bold text-white">
+                {stats.providerBreakdown.across.count}
+              </p>
+            </div>
+            <div className="p-3 text-center">
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-1">RELAY</p>
+              <p className="text-xl md:text-2xl font-bold text-white">
+                {stats.providerBreakdown.relay.count}
+              </p>
+            </div>
+            <div className="p-3 text-center">
+              <p className="text-white/60 text-xs uppercase tracking-wide mb-1">LIFI</p>
+              <p className="text-xl md:text-2xl font-bold text-white">
+                {stats.providerBreakdown.lifi.count}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
     </SlideContainer>
   );
 }

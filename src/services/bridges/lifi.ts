@@ -12,6 +12,7 @@ import {
   isWithinYear,
 } from '@/lib/utils';
 import type { BridgeProviderAdapter } from './types';
+import { coinMarketCapService } from '@/services/tokens/coinmarketcap';
 
 export class LiFiAdapter implements BridgeProviderAdapter {
   readonly name = 'lifi' as const;
@@ -39,7 +40,7 @@ export class LiFiAdapter implements BridgeProviderAdapter {
         }
 
         for (const transfer of response.transfers) {
-          const normalized = this.normalizeTransfer(transfer);
+          const normalized = await this.normalizeTransfer(transfer);
           if (!normalized) continue;
 
           // Double-check time range (API should filter, but verify)
@@ -77,13 +78,19 @@ export class LiFiAdapter implements BridgeProviderAdapter {
   ): Promise<LiFiTransfersResponse> {
     const url = new URL(`${this.baseUrl}/analytics/transfers`);
     url.searchParams.set('wallet', address);
+
     // LiFi uses milliseconds for timestamps
-    url.searchParams.set('fromTimestamp', (startTimestamp * 1000).toString());
-    url.searchParams.set('toTimestamp', (endTimestamp * 1000).toString());
+    // Cap end timestamp to current time if it's in the future
+    const now = Math.floor(Date.now() / 1000);
+    const cappedEndTimestamp = Math.min(endTimestamp, now);
+
+    url.searchParams.set('fromTimestamp', (startTimestamp).toString());
 
     if (cursor) {
       url.searchParams.set('cursor', cursor);
     }
+
+    console.log('LiFi URL:', url.toString());
 
     const response = await fetch(url.toString(), {
       headers: {
@@ -95,33 +102,64 @@ export class LiFiAdapter implements BridgeProviderAdapter {
       throw new Error(`LiFi API error: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log('LiFi API Response:', JSON.stringify(data, null, 2));
+
+    return data;
   }
 
-  private normalizeTransfer(
+  private async normalizeTransfer(
     transfer: LiFiTransfer
-  ): NormalizedBridgeTransaction | null {
+  ): Promise<NormalizedBridgeTransaction | null> {
     try {
-      // Get timestamp from sending info
-      const timestamp = Math.floor(transfer.sending.timestamp / 1000);
+      // Get timestamp from sending info - already in seconds
+      const timestamp = transfer.sending.timestamp;
       if (!timestamp || isNaN(timestamp)) return null;
 
       // Get token info from sending
-      const tokenSymbol = transfer.sending.token.symbol || 'Unknown';
-      const tokenDecimals = transfer.sending.token.decimals || 18;
       const tokenAddress = transfer.sending.token.address;
-      const tokenPriceUSD = transfer.sending.token.priceUSD
-        ? parseFloat(transfer.sending.token.priceUSD)
-        : 0;
 
-      // Calculate amounts
+      // Get token info from CoinMarketCap API
+      const tokenInfo = await coinMarketCapService.getTokenInfo(tokenAddress);
+
+      // Fallback to API response if CoinMarketCap doesn't have the data
+      const tokenSymbol = tokenInfo?.symbol ||
+                         transfer.sending.token.symbol ||
+                         tokenAddress;
+
+      const tokenDecimals = tokenInfo?.decimals ||
+                           transfer.sending.token.decimals ||
+                           18;
+
+      // Calculate formatted amount
       const amountFormatted = parseTokenAmount(
         transfer.sending.amount,
         tokenDecimals
       );
-      const amountUSD = transfer.sending.value
-        ? parseFloat(transfer.sending.value)
-        : amountFormatted * tokenPriceUSD;
+
+      // Use amountUSD if available (already calculated by LiFi API)
+      // Otherwise calculate from price
+      let amountUSD = 0;
+      if (transfer.sending.amountUSD) {
+        amountUSD = parseFloat(transfer.sending.amountUSD);
+      } else if (transfer.sending.token.priceUSD) {
+        const tokenPriceUSD = parseFloat(transfer.sending.token.priceUSD);
+        amountUSD = amountFormatted * tokenPriceUSD;
+      }
+
+      // Debug logging for high values
+      if (amountUSD > 100000) {
+        console.log('[LiFi] High value detected:', {
+          symbol: tokenSymbol,
+          amount: transfer.sending.amount,
+          decimals: tokenDecimals,
+          amountFormatted,
+          tokenPriceUSD: transfer.sending.token.priceUSD,
+          providedUSD: transfer.sending.amountUSD,
+          amountUSD,
+          txHash: transfer.sending.txHash
+        });
+      }
 
       // Map status
       let status: 'pending' | 'completed' | 'failed' = 'pending';
@@ -162,6 +200,7 @@ export class LiFiAdapter implements BridgeProviderAdapter {
       return null;
     }
   }
+
 }
 
 // Export singleton instance

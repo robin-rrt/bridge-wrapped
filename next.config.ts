@@ -1,6 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 's2.coinmarketcap.com',
+        pathname: '/static/img/coins/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.coingecko.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'coin-images.coingecko.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+      },
+    ],
+  },
   webpack: (config, { isServer }) => {
     // Prevent certain modules from being bundled on client
     if (!isServer) {

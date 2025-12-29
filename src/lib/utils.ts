@@ -69,13 +69,36 @@ export function truncateAddress(address: string, chars = 4): string {
 // Parse token amount from raw value
 export function parseTokenAmount(amount: string, decimals: number): number {
   try {
-    const value = BigInt(amount);
+    // Handle empty or invalid input
+    if (!amount || amount === '0') return 0;
+
+    // Remove any whitespace
+    const cleanAmount = amount.trim();
+
+    // Parse as BigInt (handles Wei and other raw token amounts)
+    const value = BigInt(cleanAmount);
     const divisor = BigInt(10 ** decimals);
     const integerPart = value / divisor;
     const fractionalPart = value % divisor;
+
+    // Ensure fractional part is properly padded with leading zeros
     const fractionalStr = fractionalPart.toString().padStart(decimals, '0');
-    return parseFloat(`${integerPart}.${fractionalStr}`);
-  } catch {
+
+    // Combine and parse as float
+    const result = parseFloat(`${integerPart}.${fractionalStr}`);
+
+    // Sanity check: if result is absurdly large, log it
+    if (result > 1e15) {
+      console.warn('[parseTokenAmount] Suspiciously large value:', {
+        amount,
+        decimals,
+        result
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error('[parseTokenAmount] Parse error:', { amount, decimals, error });
     return 0;
   }
 }

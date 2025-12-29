@@ -32,6 +32,7 @@ export interface ChainStats {
   count: number;
   percentage: number;
   volumeUSD: number;
+  logo?: string;
 }
 
 // Token statistics
@@ -41,6 +42,7 @@ export interface TokenStats {
   count: number;
   totalVolumeUSD: number;
   percentage: number;
+  logo?: string;
 }
 
 // Daily activity
@@ -124,7 +126,8 @@ export interface BridgeWrappedStats {
 
 // Across API Response
 export interface AcrossDeposit {
-  depositId: number;
+  id: number;
+  depositId: string | number;
   depositTxHash: string;
   originChainId: number;
   destinationChainId: number;
@@ -135,14 +138,23 @@ export interface AcrossDeposit {
   outputToken: string;
   outputAmount: string;
   message: string;
-  fillDeadline: number;
-  exclusivityDeadline: number;
+  fillDeadline: string;
+  exclusivityDeadline: string | null;
   exclusiveRelayer: string;
-  quoteTimestamp: number;
+  quoteTimestamp: string;
   status: string;
-  fillTxs: string[];
-  updatedAt: string;
+  fillTxs?: string[];
+  updatedAt?: string;
   depositTime?: number;
+  depositBlockNumber?: number;
+  depositBlockTimestamp?: string;
+  fillBlockTimestamp?: string;
+  fillTx?: string;
+  depositTxnRef?: string;
+  fillTxnRef?: string;
+  inputPriceUsd?: string;
+  outputPriceUsd?: string;
+  bridgeFeeUsd?: string;
   feeBreakdown?: {
     totalBridgeFeeUsd: string;
     totalBridgeFeePct: string;
@@ -171,17 +183,59 @@ export interface RelayRequest {
   recipient: string;
   createdAt: string;
   updatedAt: string;
-  originChainId: number;
-  destinationChainId: number;
   data: {
     inTxHashes?: string[];
     outTxHashes?: string[];
+    inTxs?: Array<{
+      hash: string;
+      chainId: number;
+      timestamp: number;
+      type: string;
+      block?: number;
+    }>;
+    outTxs?: Array<{
+      hash: string;
+      chainId: number;
+      timestamp: number;
+      type: string;
+      block?: number;
+    }>;
     currency: string;
     currencyObject?: {
       symbol: string;
       decimals: number;
       chainId: number;
       address: string;
+    };
+    feeCurrencyObject?: {
+      symbol: string;
+      decimals: number;
+      chainId: number;
+      address: string;
+    };
+    metadata?: {
+      currencyIn?: {
+        currency?: {
+          symbol: string;
+          decimals: number;
+          address: string;
+          chainId: number;
+        };
+        amount?: string;
+        amountFormatted?: string;
+        amountUsd?: string;
+      };
+      currencyOut?: {
+        currency?: {
+          symbol: string;
+          decimals: number;
+          address: string;
+          chainId: number;
+        };
+        amount?: string;
+        amountFormatted?: string;
+        amountUsd?: string;
+      };
     };
     amount: string;
     amountFormatted?: string;
@@ -209,18 +263,26 @@ export interface LiFiTransfer {
       decimals: number;
       chainId: number;
       name: string;
+      coinKey?: string;
+      logoURI?: string;
       priceUSD: string;
     };
     chainId: number;
     gasPrice: string;
     gasUsed: string;
     gasToken: {
+      address?: string;
+      chainId?: number;
       symbol: string;
       decimals: number;
+      name?: string;
+      coinKey?: string;
+      logoURI?: string;
       priceUSD: string;
     };
     gasAmount: string;
     gasAmountUSD: string;
+    amountUSD?: string;
     timestamp: number;
     value: string;
   };
@@ -234,9 +296,26 @@ export interface LiFiTransfer {
       decimals: number;
       chainId: number;
       name: string;
+      coinKey?: string;
+      logoURI?: string;
       priceUSD: string;
     };
     chainId: number;
+    gasPrice?: string;
+    gasUsed?: string;
+    gasToken?: {
+      address?: string;
+      chainId?: number;
+      symbol: string;
+      decimals: number;
+      name?: string;
+      coinKey?: string;
+      logoURI?: string;
+      priceUSD: string;
+    };
+    gasAmount?: string;
+    gasAmountUSD?: string;
+    amountUSD?: string;
     timestamp: number;
     value: string;
   };

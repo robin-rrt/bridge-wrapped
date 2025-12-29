@@ -7,8 +7,9 @@ import type {
   MonthlyActivity,
 } from '@/types';
 import { MONTH_NAMES } from '@/lib/constants';
-import { getChainName } from '@/services/chains/chainInfo';
+import { getChainName, getChainLogo } from '@/services/chains/chainInfo';
 import { calculatePercentage, formatDateISO } from '@/lib/utils';
+import { coinMarketCapService } from '@/services/tokens/coinmarketcap';
 import { acrossAdapter } from './across';
 import { relayAdapter } from './relay';
 import { lifiAdapter } from './lifi';
@@ -96,11 +97,11 @@ export class BridgeAggregator {
   /**
    * Calculate all wrapped statistics from transactions
    */
-  private calculateStats(
+  private async calculateStats(
     address: string,
     year: number,
     transactions: NormalizedBridgeTransaction[]
-  ): BridgeWrappedStats {
+  ): Promise<BridgeWrappedStats> {
     // Sort transactions by timestamp
     const sortedTransactions = [...transactions].sort(
       (a, b) => a.timestamp - b.timestamp
@@ -134,8 +135,22 @@ export class BridgeAggregator {
       lifi: { count: 0, volumeUSD: 0 },
     };
 
+    console.log(sortedTransactions)
     // Process each transaction
     for (const tx of sortedTransactions) {
+      // Log individual high-value transactions
+      if (tx.amountUSD > 100000) {
+        console.log('[Aggregator] High-value transaction:', {
+          provider: tx.provider,
+          txHash: tx.txHash,
+          symbol: tx.tokenSymbol,
+          amount: tx.amount,
+          amountFormatted: tx.amountFormatted,
+          amountUSD: tx.amountUSD,
+          timestamp: tx.timestamp,
+        });
+      }
+
       totalVolumeUSD += tx.amountUSD;
 
       // Source chain counts
@@ -212,7 +227,7 @@ export class BridgeAggregator {
     );
 
     // Calculate most bridged token
-    const mostBridgedToken = this.getTopTokenStats(tokenCounts, totalBridgingActions);
+    const mostBridgedToken = await this.getTopTokenStats(tokenCounts, totalBridgingActions);
 
     // Calculate busiest day
     const busiestDay = this.getBusiestDay(dailyActivity);
@@ -236,7 +251,23 @@ export class BridgeAggregator {
     );
 
     // Get top tokens
-    const topTokens = this.getTopNTokenStats(tokenCounts, totalBridgingActions, 5);
+    const topTokens = await this.getTopNTokenStats(tokenCounts, totalBridgingActions, 5);
+
+    // Log final volume statistics
+    console.log('[Aggregator] Volume calculation summary:', {
+      totalTransactions: totalBridgingActions,
+      totalVolumeUSD,
+      providerBreakdown: {
+        across: { count: providerStats.across.count, volume: providerStats.across.volumeUSD },
+        relay: { count: providerStats.relay.count, volume: providerStats.relay.volumeUSD },
+        lifi: { count: providerStats.lifi.count, volume: providerStats.lifi.volumeUSD },
+      },
+      topTokens: Array.from(tokenCounts.entries()).slice(0, 5).map(([symbol, data]) => ({
+        symbol,
+        volume: data.volumeUSD,
+        count: data.count,
+      })),
+    });
 
     return {
       walletAddress: address,
@@ -280,6 +311,7 @@ export class BridgeAggregator {
       count: maxCount,
       percentage: calculatePercentage(maxCount, total),
       volumeUSD: 0, // Not tracked for source chains
+      logo: getChainLogo(maxChainId),
     };
   }
 
@@ -308,13 +340,14 @@ export class BridgeAggregator {
       count,
       percentage: calculatePercentage(count, total),
       volumeUSD: maxVolume,
+      logo: getChainLogo(maxChainId),
     };
   }
 
-  private getTopTokenStats(
+  private async getTopTokenStats(
     tokenCounts: Map<string, { count: number; volumeUSD: number; address: string }>,
     total: number
-  ): TokenStats | null {
+  ): Promise<TokenStats | null> {
     if (tokenCounts.size === 0) return null;
 
     let maxSymbol = '';
@@ -329,12 +362,16 @@ export class BridgeAggregator {
       }
     }
 
+    // Fetch token logo from CoinMarketCap
+    const tokenInfo = await coinMarketCapService.getTokenInfo(maxData.address);
+
     return {
       symbol: maxSymbol,
       address: maxData.address,
       count: maxData.count,
       totalVolumeUSD: maxData.volumeUSD,
       percentage: calculatePercentage(maxData.count, total),
+      logo: tokenInfo?.logo,
     };
   }
 
@@ -420,17 +457,22 @@ export class BridgeAggregator {
       count,
       percentage: calculatePercentage(count, total),
       volumeUSD: 0,
+      logo: getChainLogo(chainId),
     }));
   }
 
-  private getTopNTokenStats(
+  private async getTopNTokenStats(
     tokenCounts: Map<string, { count: number; volumeUSD: number; address: string }>,
     total: number,
     n: number
-  ): TokenStats[] {
+  ): Promise<TokenStats[]> {
     const sorted = Array.from(tokenCounts.entries())
       .sort((a, b) => b[1].count - a[1].count)
       .slice(0, n);
+
+    // Fetch all token logos in parallel
+    const addresses = sorted.map(([_, data]) => data.address);
+    const tokenInfoMap = await coinMarketCapService.getMultipleTokenInfo(addresses);
 
     return sorted.map(([symbol, data]) => ({
       symbol,
@@ -438,6 +480,7 @@ export class BridgeAggregator {
       count: data.count,
       totalVolumeUSD: data.volumeUSD,
       percentage: calculatePercentage(data.count, total),
+      logo: tokenInfoMap.get(data.address.toLowerCase())?.logo,
     }));
   }
 }

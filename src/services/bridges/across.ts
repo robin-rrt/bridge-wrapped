@@ -12,6 +12,7 @@ import {
   isWithinYear,
 } from '@/lib/utils';
 import type { BridgeProviderAdapter } from './types';
+import { coinMarketCapService } from '@/services/tokens/coinmarketcap';
 
 export class AcrossAdapter implements BridgeProviderAdapter {
   readonly name = 'across' as const;
@@ -38,7 +39,7 @@ export class AcrossAdapter implements BridgeProviderAdapter {
         }
 
         for (const deposit of response.deposits) {
-          const normalized = this.normalizeDeposit(deposit);
+          const normalized = await this.normalizeDeposit(deposit);
           if (!normalized) continue;
 
           // Check if within time range
@@ -79,12 +80,15 @@ export class AcrossAdapter implements BridgeProviderAdapter {
   ): Promise<AcrossDepositsResponse> {
     const url = new URL(`${this.baseUrl}/deposits`);
     url.searchParams.set('depositor', address);
-    url.searchParams.set('limit', PAGINATION.ACROSS_LIMIT.toString());
-    url.searchParams.set('skip', offset.toString());
+    // url.searchParams.set('limit', PAGINATION.ACROSS_LIMIT.toString());
+    // url.searchParams.set('skip', offset.toString());
+
+    console.log(url.toString())
 
     const response = await fetch(url.toString(), {
+      method: 'GET',
       headers: {
-        Accept: 'application/json',
+        Accept: '*/*',
       },
     });
 
@@ -92,30 +96,75 @@ export class AcrossAdapter implements BridgeProviderAdapter {
       throw new Error(`Across API error: ${response.status}`);
     }
 
-    return response.json();
+    const data = await response.json();
+    //console.log('Across API Response:', JSON.stringify(data, null, 2));
+
+    // The API returns a flat array, but we need it wrapped in the expected format
+    if (Array.isArray(data)) {
+      return {
+        deposits: data,
+        pagination: {
+          limit: PAGINATION.ACROSS_LIMIT,
+          offset: offset,
+          total: data.length
+        }
+      };
+    }
+
+    return data;
   }
 
-  private normalizeDeposit(
+  private async normalizeDeposit(
     deposit: AcrossDeposit
-  ): NormalizedBridgeTransaction | null {
+  ): Promise<NormalizedBridgeTransaction | null> {
     try {
-      // Get timestamp from depositTime or quoteTimestamp
-      const timestamp = deposit.depositTime || deposit.quoteTimestamp;
-      if (!timestamp) return null;
+      // Get timestamp from depositBlockTimestamp or quoteTimestamp (both are ISO strings)
+      const timestampStr = deposit.depositBlockTimestamp || deposit.quoteTimestamp;
+      if (!timestampStr) return null;
 
-      // Get token info
-      const tokenSymbol = deposit.token?.symbol || 'Unknown';
-      const tokenDecimals = deposit.token?.decimals || 18;
-      const tokenPriceUSD = deposit.token?.priceUsd
-        ? parseFloat(deposit.token.priceUsd)
-        : 0;
+      // Convert ISO string to Unix timestamp in seconds
+      const timestamp = Math.floor(new Date(timestampStr).getTime() / 1000);
+      if (isNaN(timestamp)) return null;
 
-      // Calculate formatted amount
+      // Get token info from CoinMarketCap API
+      const tokenInfo = await coinMarketCapService.getTokenInfo(deposit.inputToken);
+
+      // Fallback to API response if CoinMarketCap doesn't have the data
+      const tokenSymbol = tokenInfo?.symbol || deposit.token?.symbol || deposit.inputToken;
+      const tokenDecimals = tokenInfo?.decimals || deposit.token?.decimals || 18;
+
+      // Calculate formatted amount first
       const amountFormatted = parseTokenAmount(
         deposit.inputAmount,
         tokenDecimals
       );
+
+      // Get price from API - these are already in correct USD format
+      let tokenPriceUSD = 0;
+      if (deposit.inputPriceUsd) {
+        tokenPriceUSD = parseFloat(deposit.inputPriceUsd);
+      } else if (deposit.token?.priceUsd) {
+        tokenPriceUSD = parseFloat(deposit.token.priceUsd);
+      }
+
+      // Calculate USD value
       const amountUSD = amountFormatted * tokenPriceUSD;
+
+      // Debug logging for high values
+      if (amountUSD > 100000) {
+        console.log('[Across] High value detected:', {
+          sourceChain: deposit.originChainId,
+          destChain: deposit.destinationChainId,
+          tokenAddress: deposit.inputToken,
+          symbol: tokenSymbol,
+          amount: deposit.inputAmount,
+          decimals: tokenDecimals,
+          amountFormatted,
+          tokenPriceUSD,
+          amountUSD,
+          txHash: deposit.depositTxHash
+        });
+      }
 
       // Map status
       let status: 'pending' | 'completed' | 'failed' = 'pending';
@@ -151,6 +200,7 @@ export class AcrossAdapter implements BridgeProviderAdapter {
       return null;
     }
   }
+
 }
 
 // Export singleton instance
