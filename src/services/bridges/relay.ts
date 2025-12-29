@@ -3,7 +3,7 @@ import type {
   RelayRequest,
   RelayRequestsResponse,
 } from '@/types';
-import { API_URLS, PAGINATION } from '@/lib/constants';
+import { API_URLS } from '@/lib/constants';
 import { getChainName } from '@/services/chains/chainInfo';
 import {
   generateTxId,

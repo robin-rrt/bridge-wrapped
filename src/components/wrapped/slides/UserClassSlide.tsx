@@ -140,7 +140,7 @@ export function UserClassSlide({
                 transition={{ delay: 2 }}
               >
                 <p className="text-white/90 text-xs text-center leading-relaxed italic">
-                  "{userClass.description}"
+                  &quot;{userClass.description}&quot;
                 </p>
               </motion.div>
 

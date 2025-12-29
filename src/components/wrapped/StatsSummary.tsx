@@ -40,11 +40,6 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
     color: getChainColor(chain.chainId),
   }));
 
-  const providerData = [
-    { name: 'Across', value: stats.providerBreakdown.across.count, color: '#6BFFC0' },
-    { name: 'Relay', value: stats.providerBreakdown.relay.count, color: '#FFD166' },
-    { name: 'LiFi', value: stats.providerBreakdown.lifi.count, color: '#EF476F' },
-  ].filter((p) => p.value > 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
