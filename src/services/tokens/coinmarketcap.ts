@@ -60,41 +60,28 @@ const SymbolToLogo: { [k: string]: string } = {
 };
 
 class CoinMarketCapService {
-  private baseURL = 'https://pro-api.coinmarketcap.com/v2';
-  private apiKey: string | undefined;
   private cache: Map<string, { data: TokenInfo; timestamp: number }> = new Map();
   private cacheExpiry = 1000 * 60 * 60; // 1 hour cache
 
-  constructor() {
-    this.apiKey = process.env.NEXT_PUBLIC_COINMARKETCAP_API_KEY;
-  }
-
   private async fetchFromAPI(addresses: string[]): Promise<CoinMarketCapResponse | null> {
-    if (!this.apiKey) {
-      console.warn('CoinMarketCap API key not configured');
-      return null;
-    }
-
     try {
-      const response = await fetch(
-        `${this.baseURL}/cryptocurrency/info?address=${addresses.join(',')}`,
-        {
-          headers: {
-            'X-CMC_PRO_API_KEY': this.apiKey,
-            'Accept': 'application/json',
-          },
-        }
-      );
+      const response = await fetch('/api/token-info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ addresses }),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('CoinMarketCap API error:', response.status, response.statusText, errorText);
+        console.error('Token info API error:', response.status, response.statusText, errorText);
         return null;
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching from CoinMarketCap:', error);
+      console.error('Error fetching from token info API:', error);
       return null;
     }
   }
@@ -115,11 +102,6 @@ class CoinMarketCapService {
     if (fallbackInfo) {
       this.cache.set(lowerAddress, { data: fallbackInfo, timestamp: Date.now() });
       return fallbackInfo;
-    }
-
-    // If no fallback and no API key, return null
-    if (!this.apiKey) {
-      return null;
     }
 
     // Try fetching from CoinMarketCap API for unknown tokens
