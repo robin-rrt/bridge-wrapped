@@ -44,18 +44,18 @@ interface TokenInfo {
 }
 
 const SymbolToLogo: { [k: string]: string } = {
-  BNB: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png',
-  AVAX: 'https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png',
-  DAI: 'https://coin-images.coingecko.com/coins/images/9956/large/Badge_Dai.png',
-  ETH: 'https://coin-images.coingecko.com/coins/images/279/large/ethereum.png',
-  KAIA: 'https://assets.coingecko.com/coins/images/39901/large/KAIA.png',
-  MATIC: 'https://coin-images.coingecko.com/coins/images/32440/standard/polygon.png',
+  BNB: 'https://cryptologos.cc/logos/bnb-bnb-logo.png?v=040',
+  AVAX: 'https://cryptologos.cc/logos/avalanche-avax-logo.png?v=040',
+  DAI: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png?v=040',
+  ETH: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=040',
+  KAIA: 'https://cryptologos.cc/logos/kaia-kaia-logo.png?v=040',
+  MATIC: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=040',
   MON: 'https://assets.coingecko.com/coins/images/38927/large/monad.jpg',
-  POL: 'https://coin-images.coingecko.com/coins/images/32440/standard/polygon.png',
+  POL: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=040',
   SOPH: 'https://assets.coingecko.com/coins/images/38680/large/sophon_logo_200.png',
   USDC: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png',
   USDT: 'https://coin-images.coingecko.com/coins/images/35023/large/USDT.png',
-  WETH: 'https://coin-images.coingecko.com/coins/images/2518/standard/weth.png',
+  WETH: 'https://coin-images.coingecko.com/coins/images/2518/large/weth.png',
   HYPE: 'https://assets.coingecko.com/coins/images/50882/large/hyperliquid.jpg',
 };
 

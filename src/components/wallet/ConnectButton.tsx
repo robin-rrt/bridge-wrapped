@@ -39,7 +39,7 @@ export function ConnectButton() {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
+                    className="px-5 py-2.5 md:px-6 md:py-3 bg-white text-black font-semibold rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg"
                   >
                     Connect Wallet
                   </button>
@@ -63,7 +63,7 @@ export function ConnectButton() {
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-all duration-200"
+                    className="flex items-center gap-2 md:gap-3 px-4 py-2 md:px-5 md:py-2.5 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/20 transition-all duration-200"
                   >
                     {chain.hasIcon && (
                       <div
@@ -88,7 +88,7 @@ export function ConnectButton() {
                   <button
                     onClick={openAccountModal}
                     type="button"
-                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600/80 to-pink-600/80 backdrop-blur-sm text-white font-medium rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
+                    className="flex items-center gap-2 md:gap-3 px-4 py-2 md:px-5 md:py-2.5 bg-white/10 backdrop-blur-sm text-white font-medium rounded-lg border border-white/20 hover:bg-white/20 transition-all duration-200"
                   >
                     <span>{account.displayName}</span>
                     {account.displayBalance && (

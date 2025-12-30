@@ -30,7 +30,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
   // Prepare chart data
   const monthlyData = stats.monthlyActivity.map((m) => ({
     name: m.monthName.substring(0, 3),
-    bridges: m.count,
+    Bridges: m.count,
     volume: m.volumeUSD,
   }));
 
@@ -42,11 +42,11 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+    <div className="min-h-screen bg-black p-6 md:p-10 lg:p-12">
       <div className="max-w-6xl mx-auto flex flex-col items-center">
         {/* Header */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-10 md:mb-12"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -58,7 +58,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </p>
           <button
             onClick={onViewWrapped}
-            className="mt-4 px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:from-purple-700 hover:to-pink-700 transition-all"
+            className="mt-4 px-6 py-2 bg-white text-black rounded-full hover:bg-white/90 transition-all font-medium"
           >
             View Wrapped Experience
           </button>
@@ -66,14 +66,14 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
 
         {/* User Class Card - With breathing room */}
         <motion.div
-          className="flex justify-center mb-16"
+          className="flex justify-center mb-12 md:mb-16 lg:mb-20"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="relative bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-0.5 rounded-2xl shadow-2xl max-w-lg w-full">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl overflow-hidden">
-              <div className="flex items-center gap-6 p-6">
+          <div className="relative bg-gradient-to-br from-white/40 via-white/20 to-white/40 p-0.5 rounded-2xl shadow-2xl max-w-lg w-full">
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-5 md:gap-6 p-5 md:p-6 lg:p-8">
                 {/* Class Image */}
                 <div className="relative w-20 h-20 flex-shrink-0">
                   <Image
@@ -100,7 +100,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
                   {[...Array(userClass.rarity)].map((_, i) => (
                     <span
                       key={i}
-                      className="text-yellow-400 text-sm"
+                      className="text-base bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-600 bg-clip-text text-transparent"
                     >★</span>
                   ))}
                 </div>
@@ -109,9 +109,122 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </div>
         </motion.div>
 
+        {/* Charts */}
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 mb-12 md:mb-16 px-4 md:px-6">
+          {/* Monthly Activity */}
+          <motion.div
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Monthly Bridging Activity
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={monthlyData}>
+                <XAxis dataKey="name" stroke="#ffffff60" fontSize={12} />
+                <YAxis stroke="#ffffff60" fontSize={12} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#141414',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                  }}
+                  labelStyle={{ color: '#ffffff' }}
+                  itemStyle={{ color: '#ffffff' }}
+                />
+                <Bar
+                  dataKey="Bridges"
+                  fill="url(#grayGradient)"
+                  radius={[4, 4, 0, 0]}
+                />
+                <defs>
+                  <linearGradient
+                    id="grayGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="0%" stopColor="#ffffff" />
+                    <stop offset="100%" stopColor="#6b6b6b" />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
+          </motion.div>
+
+          {/* Destination Chains Pie */}
+          <motion.div
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Top Destination Chains
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={chainData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={90}
+                  paddingAngle={2}
+                  dataKey="value"
+                  label={({ name }) => name}
+                >
+                  {chainData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#141414',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                  }}
+                  labelStyle={{ color: '#ffffff' }}
+                  itemStyle={{ color: '#ffffff' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </motion.div>
+        </div>
+
+        {/* Busiest Day */}
+        {stats.busiestDay && (
+          <motion.div
+            className="w-full max-w-4xl bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.9 }}
+          >
+            <p className="text-white/60 mb-2">Your Busiest Day</p>
+            <p className="text-2xl font-bold text-white mb-1">
+              {formatDate(stats.busiestDay.date)}
+            </p>
+            <p className="text-white/80">
+              You bridged{' '}
+              <span className="font-semibold text-white">
+                {stats.busiestDay.count} times
+              </span>{' '}
+              to{' '}
+              <span className="font-semibold text-white/90">
+                {stats.busiestDay.primaryDestination.chainName}
+              </span>
+            </p>
+          </motion.div>
+        )}
+
         {/* Stats Table */}
         <motion.div
-          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-12"
+          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-8 md:mb-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -147,97 +260,11 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </div>
         </motion.div>
 
-        {/* Charts */}
-        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 px-4">
-          {/* Monthly Activity */}
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Monthly Bridging Activity
-            </h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={monthlyData}>
-                <XAxis dataKey="name" stroke="#ffffff60" fontSize={12} />
-                <YAxis stroke="#ffffff60" fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e1b4b',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                  }}
-                  labelStyle={{ color: '#ffffff' }}
-                  itemStyle={{ color: '#ffffff' }}
-                />
-                <Bar
-                  dataKey="bridges"
-                  fill="url(#purpleGradient)"
-                  radius={[4, 4, 0, 0]}
-                />
-                <defs>
-                  <linearGradient
-                    id="purpleGradient"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="0%" stopColor="#8B5CF6" />
-                    <stop offset="100%" stopColor="#EC4899" />
-                  </linearGradient>
-                </defs>
-              </BarChart>
-            </ResponsiveContainer>
-          </motion.div>
-
-          {/* Destination Chains Pie */}
-          <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Top Destination Chains
-            </h3>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={chainData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
-                  paddingAngle={2}
-                  dataKey="value"
-                  label={({ name }) => name}
-                >
-                  {chainData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e1b4b',
-                    border: 'none',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                  }}
-                  labelStyle={{ color: '#ffffff' }}
-                  itemStyle={{ color: '#ffffff' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </motion.div>
-        </div>
+        
 
         {/* Provider Breakdown Table */}
         <motion.div
-          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-12"
+          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-12 md:mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
@@ -270,11 +297,11 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
         </motion.div>
 
         {/* Top Tokens Section */}
-        <div className="w-full max-w-6xl mb-12 px-4">
+        <div className="w-full max-w-6xl mb-12 md:mb-16 px-4 md:px-6">
 
           {/* Top Tokens */}
           <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -308,30 +335,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </motion.div>
         </div>
 
-        {/* Busiest Day */}
-        {stats.busiestDay && (
-          <motion.div
-            className="w-full max-w-4xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.9 }}
-          >
-            <p className="text-white/60 mb-2">Your Busiest Day</p>
-            <p className="text-2xl font-bold text-white mb-1">
-              {formatDate(stats.busiestDay.date)}
-            </p>
-            <p className="text-white/80">
-              You bridged{' '}
-              <span className="font-semibold text-purple-400">
-                {stats.busiestDay.count} times
-              </span>{' '}
-              to{' '}
-              <span className="font-semibold text-pink-400">
-                {stats.busiestDay.primaryDestination.chainName}
-              </span>
-            </p>
-          </motion.div>
-        )}
+        
       </div>
     </div>
   );

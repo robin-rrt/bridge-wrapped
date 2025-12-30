@@ -86,19 +86,19 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <main className="min-h-screen bg-black">
       <AnimatePresence mode="wait">
         {/* Landing View */}
         {viewMode === 'landing' && (
           <motion.div
             key="landing"
-            className="min-h-screen flex flex-col items-center justify-center p-8"
+            className="min-h-screen flex flex-col items-center justify-center p-6 md:p-10 lg:p-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             {/* Header with wallet connect */}
-            <div className="absolute top-6 right-6">
+            <div className="absolute top-6 right-6 md:top-8 md:right-8">
               <ConnectButton />
             </div>
 
@@ -109,19 +109,19 @@ export default function Home() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <h1 className="text-6xl md:text-8xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-purple-400 via-pink-500 to-orange-400 bg-clip-text text-transparent">
+              <h1 className="text-6xl md:text-8xl font-bold mb-8 md:mb-10">
+                <span className="text-white">
                   Bridge
                 </span>
                 <br />
-                <span className="text-white">Wrapped</span>
+                <span className="text-white/60">Wrapped</span>
               </h1>
 
-              <p className="text-xl text-white/70 mb-4">
+              <p className="text-xl md:text-2xl text-white/70 mb-5 md:mb-6">
                 Discover your cross-chain bridging journey in {WRAPPED_YEAR}
               </p>
 
-              <p className="text-white/50 mb-12">
+              <p className="text-white/50 mb-4 md:mb-5">
                 Aggregating data from Across, Relay & LiFi
               </p>
 
@@ -129,7 +129,7 @@ export default function Home() {
               {isConnected && address ? (
                 <motion.button
                   onClick={handleGetWrapped}
-                  className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xl font-semibold rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25 hover:scale-105"
+                  className="px-8 py-4 bg-white text-black text-xl font-semibold rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:scale-105"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -152,14 +152,14 @@ export default function Home() {
                   {/* Manual address input */}
                   <form
                     onSubmit={handleManualSubmit}
-                    className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+                    className="flex flex-col sm:flex-row gap-4 md:gap-5 max-w-md mx-auto"
                   >
                     <input
                       type="text"
                       placeholder="0x..."
                       value={manualAddress}
                       onChange={(e) => setManualAddress(e.target.value)}
-                      className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors"
                     />
                     <button
                       type="submit"
@@ -196,7 +196,7 @@ export default function Home() {
         {viewMode === 'loading' && (
           <motion.div
             key="loading"
-            className="min-h-screen flex flex-col items-center justify-center p-8"
+            className="min-h-screen flex flex-col items-center justify-center p-6 md:p-10 lg:p-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -217,7 +217,7 @@ export default function Home() {
         {viewMode === 'no-data' && (
           <motion.div
             key="no-data"
-            className="min-h-screen flex flex-col items-center justify-center p-8"
+            className="min-h-screen flex flex-col items-center justify-center p-6 md:p-10 lg:p-12"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -265,7 +265,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute top-6 right-6 z-10 flex gap-3">
+            <div className="absolute top-6 right-6 md:top-8 md:right-8 z-10 flex gap-3 md:gap-4">
               <button
                 onClick={handleReset}
                 className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm hover:bg-white/20 transition-colors"

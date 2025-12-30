@@ -51,14 +51,14 @@ export const SLIDE_TYPES = {
   SUMMARY: 'summary',
 } as const;
 
-// Gradient colors for slides
+// Gradient colors for slides (Apple-like neutral palette)
 export const SLIDE_GRADIENTS = {
-  [SLIDE_TYPES.INTRO]: 'from-purple-600 via-pink-500 to-orange-400',
-  [SLIDE_TYPES.TOTAL_BRIDGES]: 'from-blue-600 via-cyan-500 to-teal-400',
-  [SLIDE_TYPES.TOP_SOURCE]: 'from-green-600 via-emerald-500 to-lime-400',
-  [SLIDE_TYPES.TOP_DESTINATION]: 'from-orange-600 via-amber-500 to-yellow-400',
-  [SLIDE_TYPES.VOLUME]: 'from-pink-600 via-rose-500 to-red-400',
-  [SLIDE_TYPES.TOP_TOKEN]: 'from-indigo-600 via-violet-500 to-purple-400',
-  [SLIDE_TYPES.BUSIEST_DAY]: 'from-cyan-600 via-blue-500 to-indigo-400',
-  [SLIDE_TYPES.SUMMARY]: 'from-slate-800 via-slate-700 to-slate-600',
+  [SLIDE_TYPES.INTRO]: 'from-neutral-950 via-neutral-900 to-neutral-950',
+  [SLIDE_TYPES.TOTAL_BRIDGES]: 'from-neutral-900 via-neutral-800 to-neutral-900',
+  [SLIDE_TYPES.TOP_SOURCE]: 'from-neutral-950 to-neutral-900',
+  [SLIDE_TYPES.TOP_DESTINATION]: 'from-neutral-900 to-neutral-950',
+  [SLIDE_TYPES.VOLUME]: 'from-neutral-950 via-neutral-900 to-neutral-800',
+  [SLIDE_TYPES.TOP_TOKEN]: 'from-neutral-900 via-neutral-950 to-neutral-900',
+  [SLIDE_TYPES.BUSIEST_DAY]: 'from-neutral-800 via-neutral-900 to-neutral-950',
+  [SLIDE_TYPES.SUMMARY]: 'from-neutral-950 to-black',
 } as const;
