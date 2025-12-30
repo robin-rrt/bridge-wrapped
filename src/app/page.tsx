@@ -159,12 +159,12 @@ export default function Home() {
                       placeholder="0x..."
                       value={manualAddress}
                       onChange={(e) => setManualAddress(e.target.value)}
-                      className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
+                      className="flex-1 px-5 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-purple-500 transition-colors"
                     />
                     <button
                       type="submit"
                       disabled={!/^0x[a-fA-F0-9]{40}$/.test(manualAddress)}
-                      className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-8 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Look up
                     </button>
@@ -237,7 +237,7 @@ export default function Home() {
               </p>
               <button
                 onClick={handleReset}
-                className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-colors"
+                className="px-8 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-colors"
               >
                 Try Another Address
               </button>
@@ -268,7 +268,7 @@ export default function Home() {
             <div className="absolute top-6 right-6 z-10 flex gap-3">
               <button
                 onClick={handleReset}
-                className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm hover:bg-white/20 transition-colors"
+                className="px-6 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm hover:bg-white/20 transition-colors"
               >
                 New Search
               </button>

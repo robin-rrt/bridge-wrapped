@@ -39,7 +39,7 @@ export function ConnectButton() {
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
+                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
                   >
                     Connect Wallet
                   </button>
@@ -51,7 +51,7 @@ export function ConnectButton() {
                   <button
                     onClick={openChainModal}
                     type="button"
-                    className="px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all duration-200"
+                    className="px-8 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition-all duration-200"
                   >
                     Wrong network
                   </button>
