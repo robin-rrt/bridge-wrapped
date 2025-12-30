@@ -23,7 +23,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     blockExplorer: 'https://etherscan.io',
     color: '#627EEA',
-    logoUrl: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
+    logoUrl: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=040',
   },
   // Optimism
   10: {
@@ -33,7 +33,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     blockExplorer: 'https://optimistic.etherscan.io',
     color: '#FF0420',
-    logoUrl: 'https://assets.coingecko.com/coins/images/25244/small/Optimism.png',
+    logoUrl: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
   },
   // BSC
   56: {
@@ -43,7 +43,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
     blockExplorer: 'https://bscscan.com',
     color: '#F0B90B',
-    logoUrl: 'https://assets.coingecko.com/asset_platforms/images/1/large/bnb_smart_chain.png',
+    logoUrl: 'https://cryptologos.cc/logos/bnb-bnb-logo.png?v=040',
   },
   // Gnosis
   100: {
@@ -53,6 +53,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'xDai', symbol: 'XDAI', decimals: 18 },
     blockExplorer: 'https://gnosisscan.io',
     color: '#04795B',
+    logoUrl: 'https://cryptologos.cc/logos/gnosis-gno-gno-logo.png?v=040',
   },
   // Polygon
   137: {
@@ -62,7 +63,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
     blockExplorer: 'https://polygonscan.com',
     color: '#8247E5',
-    logoUrl: 'https://assets.coingecko.com/coins/images/4713/small/polygon.png',
+    logoUrl: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=040',
   },
   // Fantom
   250: {
@@ -72,6 +73,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Fantom', symbol: 'FTM', decimals: 18 },
     blockExplorer: 'https://ftmscan.com',
     color: '#1969FF',
+    logoUrl: 'https://cryptologos.cc/logos/fantom-ftm-logo.png?v=040',
   },
   // zkSync Era
   324: {
@@ -90,6 +92,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     blockExplorer: 'https://zkevm.polygonscan.com',
     color: '#8247E5',
+    logoUrl: 'https://cryptologos.cc/logos/polygon-matic-logo.png?v=040',
   },
   // Mantle
   5000: {
@@ -99,6 +102,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Mantle', symbol: 'MNT', decimals: 18 },
     blockExplorer: 'https://explorer.mantle.xyz',
     color: '#000000',
+    logoUrl: 'https://cryptologos.cc/logos/mantle-mnt-logo.png?v=040',
   },
   // Base
   8453: {
@@ -127,7 +131,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     blockExplorer: 'https://arbiscan.io',
     color: '#28A0F0',
-    logoUrl: 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg',
+    logoUrl: 'https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=040',
   },
   // Arbitrum Nova
   42170: {
@@ -146,7 +150,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Avalanche', symbol: 'AVAX', decimals: 18 },
     blockExplorer: 'https://snowtrace.io',
     color: '#E84142',
-    logoUrl: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png',
+    logoUrl: 'https://cryptologos.cc/logos/avalanche-avax-logo.png?v=040',
   },
   // Linea
   59144: {
@@ -174,7 +178,7 @@ export const CHAINS: Record<number, ChainInfo> = {
     nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
     blockExplorer: 'https://scrollscan.com',
     color: '#FFEEDA',
-    logoUrl: 'https://assets.coingecko.com/coins/images/50571/standard/scroll.jpg?1728376125',
+    logoUrl: 'https://assets.coingecko.com/coins/images/50571/large/scroll.jpg?1728376125',
   },
   // Zora
   7777777: {
