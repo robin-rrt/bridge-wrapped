@@ -15,7 +15,7 @@ interface TopSourceChainSlideProps {
 export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.TOP_SOURCE]}>
-      <div className="space-y-10">
+      <div className="space-y-10 md:space-y-12">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -26,7 +26,7 @@ export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
         </motion.p>
 
         <motion.div
-          className="py-8 flex items-center justify-center"
+          className="py-10 md:py-12 flex items-center justify-center"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
@@ -63,7 +63,7 @@ export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
         </motion.h2>
 
         <motion.div
-          className="flex flex-wrap items-center justify-center gap-3 text-white/80"
+          className="flex flex-wrap items-center justify-center gap-4 md:gap-5 text-white/80"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}

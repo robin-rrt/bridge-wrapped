@@ -5,8 +5,8 @@ import { SlideContainer } from './SlideContainer';
 
 export function AvailNexusSlide() {
   return (
-    <SlideContainer gradient="from-purple-600 via-blue-600 to-indigo-700">
-      <div className="space-y-12">
+    <SlideContainer gradient="from-neutral-950 via-neutral-900 to-neutral-950">
+      <div className="space-y-12 md:space-y-14 lg:space-y-16">
         <motion.div
           className="py-4"
           initial={{ scale: 0.5, opacity: 0 }}
@@ -24,7 +24,7 @@ export function AvailNexusSlide() {
         >
           Transfer the same volume
           <br />
-          <span className="text-blue-200">Remove the need for a bridge</span>
+          <span className="text-white/70">Remove the need for a bridge</span>
           <br />
         </motion.h2>
 
@@ -47,7 +47,7 @@ export function AvailNexusSlide() {
             href="https://docs.availproject.org/nexus/introduction-to-nexus"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-8 py-5 md:px-10 md:py-6 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl border-2 border-white/50 hover:border-white/70 transition-all duration-300 group shadow-2xl m-10"
+            className="inline-block px-6 py-4 md:px-8 md:py-5 lg:px-10 lg:py-6 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl border-2 border-white/50 hover:border-white/70 transition-all duration-300 group shadow-2xl mt-8 md:mt-10"
           >
             <p className="text-lg md:text-xl lg:text-2xl font-bold text-white mb-2 group-hover:scale-105 transition-transform">
               Use Avail Nexus

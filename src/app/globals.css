@@ -1,8 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f0a1a;
-  --foreground: #ededed;
+  /* Apple-like neutral palette */
+  --background: #000000;
+  --foreground: #ffffff;
+
+  /* Background Colors */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-elevated: #141414;
+  --bg-overlay: #1a1a1a;
+
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1a1;
+  --text-muted: #6b6b6b;
+  --text-subtle: #404040;
+
+  /* Border Colors */
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-strong: rgba(255, 255, 255, 0.2);
+
+  /* Interaction States */
+  --hover-bg: rgba(255, 255, 255, 0.05);
+  --active-bg: rgba(255, 255, 255, 0.1);
+  --focus-ring: rgba(255, 255, 255, 0.5);
 }
 
 @theme inline {
@@ -40,17 +63,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.7);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Selection */
 ::selection {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
@@ -80,6 +103,6 @@ body {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }

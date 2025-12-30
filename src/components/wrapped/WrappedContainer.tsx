@@ -168,7 +168,7 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
       <AnimatePresence mode="wait">{renderSlide()}</AnimatePresence>
 
       {/* Progress indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute bottom-10 md:bottom-12 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-10">
         {availableSlides.map((_, index) => (
           <motion.div
             key={index}
@@ -187,14 +187,14 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
       </div>
 
       {/* Navigation hints */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-white/40 text-sm z-10">
+      <div className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 text-white/40 text-sm z-10">
         Tap or use arrow keys to navigate
       </div>
 
       {/* Navigation arrows */}
       {currentSlideIndex > 0 && (
         <motion.button
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-10"
+          className="absolute left-4 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-10"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={(e) => {
@@ -221,7 +221,7 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
 
       {currentSlideIndex < availableSlides.length - 1 && (
         <motion.button
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-10"
+          className="absolute right-4 md:right-6 lg:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors z-10"
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={(e) => {

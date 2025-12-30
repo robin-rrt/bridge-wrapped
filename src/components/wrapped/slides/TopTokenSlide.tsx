@@ -18,7 +18,7 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
 
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.TOP_TOKEN]}>
-      <div className="space-y-8">
+      <div className="space-y-10 md:space-y-12">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -29,7 +29,7 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
         </motion.p>
 
         <motion.div
-          className="py-6 flex items-center justify-center"
+          className="py-8 md:py-10 flex items-center justify-center"
           initial={{ rotateY: 180, opacity: 0 }}
           animate={{ rotateY: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
@@ -69,7 +69,7 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
         </motion.h2>
 
         <motion.div
-          className="space-y-4 pt-4"
+          className="space-y-5 md:space-y-6 pt-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}

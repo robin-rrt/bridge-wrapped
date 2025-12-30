@@ -16,7 +16,7 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
 
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.BUSIEST_DAY]}>
-      <div className="space-y-10 text-center">
+      <div className="space-y-10 md:space-y-12 text-center">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -27,14 +27,14 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
         </motion.p>
 
        
-          <p className="text-3xl md:text-5xl font-bold text-yellow-300 ">
+          <p className="text-3xl md:text-5xl font-bold text-white">
             {formattedDate}
           </p>
            <br />
     
 
         <motion.div
-          className="py-6"
+          className="py-8 md:py-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
@@ -43,9 +43,9 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <AnimatedCounter
               value={busiestDay.count}
-              className="text-7xl md:text-8xl font-bold text-yellow-300"
+              className="text-7xl md:text-8xl font-bold text-white"
             />
-            <span className="text-4xl md:text-5xl text-yellow-300">times</span>
+            <span className="text-4xl md:text-5xl text-white/80">times</span>
           </div>
           <motion.p
             className="text-white/70 text-lg md:text-xl mt-6"
@@ -59,7 +59,7 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
         
 
         <motion.div
-          className="inline-block max-w-xl p-6 md:p-8 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-3xl backdrop-blur-sm border border-white/30"
+          className="inline-block max-w-xl p-6 md:p-8 lg:p-10 bg-white/5 rounded-3xl backdrop-blur-sm border border-white/10"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.7 }}

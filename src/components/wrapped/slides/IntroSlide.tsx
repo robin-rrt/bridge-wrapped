@@ -12,7 +12,7 @@ export function IntroSlide({ year }: IntroSlideProps) {
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.INTRO]}>
       <motion.div
-        className="space-y-8"
+        className="space-y-10 md:space-y-12"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.8, ease: 'easeOut' }}
@@ -40,7 +40,7 @@ export function IntroSlide({ year }: IntroSlideProps) {
       </motion.div>
 
       <motion.p
-        className="mt-16 text-white/70 text-lg md:text-xl font-light"
+        className="mt-20 md:mt-24 text-white/70 text-lg md:text-xl font-light"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.6 }}

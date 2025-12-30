@@ -14,7 +14,7 @@ interface TotalBridgesSlideProps {
 export function TotalBridgesSlide({ totalBridges, year }: TotalBridgesSlideProps) {
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.TOTAL_BRIDGES]}>
-      <div className="space-y-10">
+      <div className="space-y-10 md:space-y-12">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -25,7 +25,7 @@ export function TotalBridgesSlide({ totalBridges, year }: TotalBridgesSlideProps
         </motion.p>
 
         <motion.div
-          className="py-8"
+          className="py-10 md:py-12"
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
@@ -48,7 +48,7 @@ export function TotalBridgesSlide({ totalBridges, year }: TotalBridgesSlideProps
         </motion.p>
 
         <motion.p
-          className="mt-12 text-white/60 text-lg md:text-xl font-light"
+          className="mt-14 md:mt-16 text-white/60 text-lg md:text-xl font-light"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}

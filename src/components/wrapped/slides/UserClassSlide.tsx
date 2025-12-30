@@ -21,8 +21,8 @@ export function UserClassSlide({
   avgTransactionVolume,
 }: UserClassSlideProps) {
   return (
-    <SlideContainer gradient="from-indigo-900 via-purple-900 to-pink-900">
-      <div className="flex flex-col items-center space-y-6">
+    <SlideContainer gradient="from-neutral-950 via-neutral-900 to-neutral-950">
+      <div className="flex flex-col items-center space-y-8 md:space-y-10">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -40,10 +40,10 @@ export function UserClassSlide({
           transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
         >
           {/* Card Background with gradient border */}
-          <div className="relative bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-0.5 rounded-2xl shadow-2xl">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-white/40 via-white/20 to-white/40 p-0.5 rounded-2xl shadow-2xl">
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl overflow-hidden">
               {/* Card Header */}
-              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-4 py-2.5 border-b-2 border-yellow-500/30">
+              <div className="bg-gradient-to-r from-white/10 to-white/5 px-5 py-3 md:px-6 md:py-3.5 border-b border-white/10">
                 <motion.h2
                   className="text-lg md:text-xl font-bold text-white text-center"
                   initial={{ opacity: 0 }}
@@ -56,7 +56,7 @@ export function UserClassSlide({
 
               {/* Card Image */}
               <motion.div
-                className="relative w-full aspect-square bg-gradient-to-br from-purple-600/20 to-pink-600/20 p-5"
+                className="relative w-full aspect-square bg-gradient-to-br from-white/5 to-white/10 p-6 md:p-8"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1 }}
@@ -74,7 +74,7 @@ export function UserClassSlide({
 
               {/* Card Stats */}
               <motion.div
-                className="px-4 py-3 space-y-2.5"
+                className="px-5 py-4 md:px-6 md:py-5 space-y-3 md:space-y-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 }}
@@ -87,9 +87,9 @@ export function UserClassSlide({
                       <AnimatedCounter value={totalBridges} formatFn={formatNumber} />
                     </span>
                   </div>
-                  <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-1 bg-neutral-700 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
+                      className="h-full bg-gradient-to-r from-white/80 to-white/60"
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min((totalBridges / 100) * 100, 100)}%` }}
                       transition={{ delay: 1.4, duration: 1 }}
@@ -104,9 +104,9 @@ export function UserClassSlide({
                       {formatUSD(totalVolumeUSD)}
                     </span>
                   </div>
-                  <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-1 bg-neutral-700 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
+                      className="h-full bg-gradient-to-r from-white/70 to-white/50"
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min((totalVolumeUSD / 100000) * 100, 100)}%` }}
                       transition={{ delay: 1.6, duration: 1 }}
@@ -121,9 +121,9 @@ export function UserClassSlide({
                       {formatUSD(avgTransactionVolume)}
                     </span>
                   </div>
-                  <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-1 bg-neutral-700 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                      className="h-full bg-gradient-to-r from-white/60 to-white/40"
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min((avgTransactionVolume / 10000) * 100, 100)}%` }}
                       transition={{ delay: 1.8, duration: 1 }}
@@ -134,7 +134,7 @@ export function UserClassSlide({
 
               {/* Card Description */}
               <motion.div
-                className="px-4 py-3 bg-gradient-to-r from-slate-800/50 to-slate-700/50 border-t-2 border-slate-700"
+                className="px-4 py-3 bg-gradient-to-r from-neutral-800/50 to-neutral-700/50 border-t border-white/10"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 2 }}
@@ -155,7 +155,7 @@ export function UserClassSlide({
                   {[...Array(userClass.rarity)].map((_, i) => (
                     <motion.span
                       key={i}
-                      className="text-yellow-400 text-base"
+                      className="text-white/80 text-base"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 2.3 + i * 0.1 }}

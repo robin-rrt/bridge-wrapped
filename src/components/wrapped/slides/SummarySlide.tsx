@@ -32,7 +32,7 @@ export function SummarySlide({ stats }: SummarySlideProps) {
 
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.SUMMARY]}>
-      <div className="flex flex-col items-center space-y-6 max-w-4xl mx-auto">
+      <div className="flex flex-col items-center space-y-8 md:space-y-10 max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           className="text-center"
@@ -55,8 +55,8 @@ export function SummarySlide({ stats }: SummarySlideProps) {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="relative bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 p-0.5 rounded-xl shadow-xl">
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl overflow-hidden">
+          <div className="relative bg-gradient-to-br from-white/40 via-white/20 to-white/40 p-0.5 rounded-xl shadow-xl">
+            <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl overflow-hidden">
               <div className="flex items-center gap-3 px-4 py-3">
                 <div className="relative w-12 h-12 flex-shrink-0 p-1.5">
                   <Image
@@ -74,7 +74,7 @@ export function SummarySlide({ stats }: SummarySlideProps) {
                 </div>
                 <div className="flex gap-0.5">
                   {[...Array(userClass.rarity)].map((_, i) => (
-                    <span key={i} className="text-yellow-400 text-xs">★</span>
+                    <span key={i} className="text-white/80 text-xs">★</span>
                   ))}
                 </div>
               </div>
@@ -90,13 +90,13 @@ export function SummarySlide({ stats }: SummarySlideProps) {
           animate="visible"
         >
           <div className="grid grid-cols-2 divide-x divide-white/10">
-            <motion.div className="p-4 text-center" variants={itemVariants}>
+            <motion.div className="p-4 md:p-5 lg:p-6 text-center" variants={itemVariants}>
               <p className="text-white/60 text-xs mb-1">Total Bridges</p>
               <p className="text-2xl md:text-3xl font-bold text-white">
                 {formatNumber(stats.totalBridgingActions)}
               </p>
             </motion.div>
-            <motion.div className="p-4 text-center" variants={itemVariants}>
+            <motion.div className="p-4 md:p-5 lg:p-6 text-center" variants={itemVariants}>
               <p className="text-white/60 text-xs mb-1">Total Volume</p>
               <p className="text-2xl md:text-3xl font-bold text-white">
                 {formatUSD(stats.totalVolumeUSD)}
@@ -106,7 +106,7 @@ export function SummarySlide({ stats }: SummarySlideProps) {
 
           <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
             {stats.mostUsedSourceChain && (
-              <motion.div className="p-4 text-center" variants={itemVariants}>
+              <motion.div className="p-4 md:p-5 lg:p-6 text-center" variants={itemVariants}>
                 <p className="text-white/60 text-xs mb-1">Top Source</p>
                 <p className="text-lg md:text-xl font-semibold text-white">
                   {stats.mostUsedSourceChain.chainName}
@@ -114,7 +114,7 @@ export function SummarySlide({ stats }: SummarySlideProps) {
               </motion.div>
             )}
             {stats.mostUsedDestinationChain && (
-              <motion.div className="p-4 text-center" variants={itemVariants}>
+              <motion.div className="p-4 md:p-5 lg:p-6 text-center" variants={itemVariants}>
                 <p className="text-white/60 text-xs mb-1">Top Destination</p>
                 <p className="text-lg md:text-xl font-semibold text-white">
                   {stats.mostUsedDestinationChain.chainName}
@@ -125,7 +125,7 @@ export function SummarySlide({ stats }: SummarySlideProps) {
 
           <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
             {stats.mostBridgedToken && (
-              <motion.div className="p-4 text-center" variants={itemVariants}>
+              <motion.div className="p-4 md:p-5 lg:p-6 text-center" variants={itemVariants}>
                 <p className="text-white/60 text-xs mb-1">Favorite Token</p>
                 <p className="text-lg md:text-xl font-semibold text-white">
                   {stats.mostBridgedToken.symbol.length > 15
@@ -135,7 +135,7 @@ export function SummarySlide({ stats }: SummarySlideProps) {
               </motion.div>
             )}
             {stats.busiestDay && (
-              <motion.div className="p-4 text-center" variants={itemVariants}>
+              <motion.div className="p-4 md:p-5 lg:p-6 text-center" variants={itemVariants}>
                 <p className="text-white/60 text-xs mb-1">Busiest Day</p>
                 <p className="text-lg md:text-xl font-semibold text-white">
                   {stats.busiestDay.count} bridges
@@ -153,19 +153,19 @@ export function SummarySlide({ stats }: SummarySlideProps) {
           transition={{ delay: 0.8 }}
         >
           <div className="grid grid-cols-3 divide-x divide-white/10">
-            <div className="p-3 text-center">
+            <div className="p-3 md:p-4 lg:p-5 text-center">
               <p className="text-white/60 text-xs uppercase tracking-wide mb-1">ACROSS</p>
               <p className="text-xl md:text-2xl font-bold text-white">
                 {stats.providerBreakdown.across.count}
               </p>
             </div>
-            <div className="p-3 text-center">
+            <div className="p-3 md:p-4 lg:p-5 text-center">
               <p className="text-white/60 text-xs uppercase tracking-wide mb-1">RELAY</p>
               <p className="text-xl md:text-2xl font-bold text-white">
                 {stats.providerBreakdown.relay.count}
               </p>
             </div>
-            <div className="p-3 text-center">
+            <div className="p-3 md:p-4 lg:p-5 text-center">
               <p className="text-white/60 text-xs uppercase tracking-wide mb-1">LIFI</p>
               <p className="text-xl md:text-2xl font-bold text-white">
                 {stats.providerBreakdown.lifi.count}

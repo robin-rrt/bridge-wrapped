@@ -22,13 +22,13 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <motion.div
-      className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
+      className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5 }}
     >
-      <div className="flex items-center gap-3 mb-3">
-        {icon && <div className="text-purple-400">{icon}</div>}
+      <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-5">
+        {icon && <div className="text-white/80">{icon}</div>}
         <p className="text-white/60 text-sm font-medium">{label}</p>
       </div>
       <div className="flex items-baseline gap-1">
