@@ -210,14 +210,24 @@ export const CHAINS: Record<number, ChainInfo> = {
     logoUrl: 'https://assets.coingecko.com/asset_platforms/images/9672/large/kaia.png',
   },
   // Monad
-  41454: {
-    id: 41454,
+  143: {
+    id: 143,
     name: 'Monad',
     shortName: 'MONAD',
     nativeCurrency: { name: 'Monad', symbol: 'MON', decimals: 18 },
     blockExplorer: 'https://monadvision.com',
     color: '#8B5CF6',
     logoUrl: 'https://assets.coingecko.com/coins/images/38927/large/monad.jpg',
+  },
+  // Lens
+  232: {
+    id: 232,
+    name: 'Lens Chains',
+    shortName: 'LENS',
+    nativeCurrency: { name: 'Gho', symbol: 'GHO', decimals: 18 },
+    blockExplorer: 'https://explorer.lens.xyz',
+    color: '#5cf666ff',
+    logoUrl: 'https://pbs.twimg.com/profile_images/1856110197418438656/lktVUaQ2_400x400.jpg',
   },
   // Sophon
   50104: {
