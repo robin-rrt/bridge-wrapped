@@ -121,7 +121,7 @@ export default function Home() {
                 Discover your cross-chain bridging journey in {WRAPPED_YEAR}
               </p>
 
-              <p className="text-white/50 mb-14 md:mb-16">
+              <p className="text-white/50 mb-4 md:mb-5">
                 Aggregating data from Across, Relay & LiFi
               </p>
 

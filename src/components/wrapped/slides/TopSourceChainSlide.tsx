@@ -15,7 +15,7 @@ interface TopSourceChainSlideProps {
 export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.TOP_SOURCE]}>
-      <div className="space-y-10 md:space-y-12">
+      <div className="space-y-6 md:space-y-8">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -26,7 +26,7 @@ export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
         </motion.p>
 
         <motion.div
-          className="py-10 md:py-12 flex items-center justify-center"
+          className="py-1 md:py-2 flex items-center justify-center"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.5, duration: 0.8, type: 'spring' }}
@@ -54,7 +54,7 @@ export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
         </motion.div>
 
         <motion.h2
-          className="text-5xl md:text-7xl font-bold text-white mb-8"
+          className="text-5xl md:text-6xl font-bold text-white mb-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -63,14 +63,14 @@ export function TopSourceChainSlide({ chain }: TopSourceChainSlideProps) {
         </motion.h2>
 
         <motion.div
-          className="flex flex-wrap items-center justify-center gap-4 md:gap-5 text-white/80"
+          className="flex flex-wrap items-center justify-center gap-3 md:gap-4 text-white/80"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
         >
           <AnimatedCounter
             value={chain.count}
-            className="text-5xl md:text-6xl font-semibold text-white"
+            className="text-3xl md:text-5xl font-semibold text-white"
           />
           <span className="text-2xl md:text-3xl">bridges</span>
         </motion.div>

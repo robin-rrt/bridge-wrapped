@@ -11,7 +11,7 @@ interface SlideContainerProps {
 export function SlideContainer({ children, gradient }: SlideContainerProps) {
   return (
     <motion.div
-      className={`min-h-screen w-full flex flex-col items-center justify-center px-8 py-24 md:px-24 md:py-32 lg:px-32 lg:py-40 bg-gradient-to-br ${gradient}`}
+      className={`min-h-screen w-full flex flex-col items-center justify-center px-6 py-12 md:px-16 md:py-16 lg:px-20 lg:py-20 bg-gradient-to-br ${gradient}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

@@ -18,7 +18,7 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
 
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.TOP_TOKEN]}>
-      <div className="space-y-10 md:space-y-12">
+      <div className="space-y-4 md:space-y-6">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -29,14 +29,14 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
         </motion.p>
 
         <motion.div
-          className="py-8 md:py-10 flex items-center justify-center"
+          className="py-1 md:py-2 flex items-center justify-center"
           initial={{ rotateY: 180, opacity: 0 }}
           animate={{ rotateY: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          <div className="w-32 h-32 md:w-36 md:h-36 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border-4 border-white/40 overflow-hidden">
+          <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border-4 border-white/40 overflow-hidden">
             {token.logo ? (
-              <div className="relative w-20 h-20 md:w-24 md:h-24 p-3">
+              <div className="relative w-16 h-16 md:w-20 md:h-20 p-2">
                 <Image
                   src={token.logo}
                   alt={token.symbol}
@@ -46,7 +46,7 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
                 />
               </div>
             ) : (
-              <span className="text-4xl md:text-5xl font-bold text-white">
+              <span className="text-3xl md:text-4xl font-bold text-white">
                 {token.symbol.substring(0, 4)}
               </span>
             )}
@@ -54,12 +54,12 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
         </motion.div>
 
         <motion.h2
-          className={`font-bold text-white mb-6 break-all px-4 leading-tight ${
+          className={`font-bold text-white mb-2 break-all px-4 leading-tight ${
             isLongToken
-              ? 'text-lg md:text-xl lg:text-2xl'
+              ? 'text-base md:text-lg lg:text-xl'
               : isMediumToken
-              ? 'text-2xl md:text-4xl lg:text-5xl'
-              : 'text-4xl md:text-6xl lg:text-7xl'
+              ? 'text-xl md:text-3xl lg:text-4xl'
+              : 'text-3xl md:text-5xl lg:text-6xl'
           }`}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -69,7 +69,7 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
         </motion.h2>
 
         <motion.div
-          className="space-y-5 md:space-y-6 pt-6"
+          className="space-y-2 md:space-y-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.1 }}
@@ -77,20 +77,20 @@ export function TopTokenSlide({ token }: TopTokenSlideProps) {
           <div className="flex items-center justify-center gap-3 text-white/80">
             <AnimatedCounter
               value={token.count}
-              className="text-4xl md:text-5xl font-semibold text-white"
+              className="text-3xl md:text-4xl font-semibold text-white"
             />
             <span className="text-xl md:text-2xl">times bridged</span>
           </div>
 
           {token.totalVolumeUSD > 0 && (
-            <p className="text-white/70 text-lg md:text-xl">
+            <p className="text-white/70 text-base md:text-lg">
               {formatUSD(token.totalVolumeUSD)} total volume
             </p>
           )}
         </motion.div>
 
         <motion.p
-          className="mt-8 text-white/60 text-base md:text-lg"
+          className="mt-2 text-white/60 text-base md:text-lg"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4 }}

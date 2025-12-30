@@ -16,7 +16,7 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
 
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.BUSIEST_DAY]}>
-      <div className="space-y-10 md:space-y-12 text-center">
+      <div className="space-y-4 md:space-y-6 text-center">
         <motion.p
           className="text-xl md:text-2xl text-white/80 font-light"
           initial={{ opacity: 0, y: 20 }}
@@ -30,25 +30,25 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
           <p className="text-3xl md:text-5xl font-bold text-white">
             {formattedDate}
           </p>
-           <br />
+    
     
 
         <motion.div
-          className="py-8 md:py-10"
+          className="py-1 md:py-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
         >
-          <p className="text-white/70 text-lg md:text-xl mb-4">You bridged</p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <p className="text-white/70 text-base md:text-lg mb-2">You bridged</p>
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
             <AnimatedCounter
               value={busiestDay.count}
-              className="text-7xl md:text-8xl font-bold text-white"
+              className="text-5xl md:text-6xl font-bold text-white"
             />
-            <span className="text-4xl md:text-5xl text-white/80">times</span>
+            <span className="text-3xl md:text-4xl text-white/80">times</span>
           </div>
           <motion.p
-            className="text-white/70 text-lg md:text-xl mt-6"
+            className="text-white/70 text-lg md:text-xl mt-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.3 }}
@@ -59,16 +59,16 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
         
 
         <motion.div
-          className="inline-block max-w-xl p-6 md:p-8 lg:p-10 bg-white/5 rounded-3xl backdrop-blur-sm border border-white/10"
+          className="inline-block max-w-xl p-3 md:p-4 bg-white/5 rounded-2xl backdrop-blur-sm border border-white/10"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.7 }}
         >
-          <p className="text-white text-lg md:text-xl mb-3 leading-relaxed">
+          <p className="text-white text-base md:text-lg mb-2 leading-relaxed">
             💡 You could&apos;ve reduced multiple bridging by{' '}
-            <span className="font-bold text-white text-2xl md:text-3xl">90%</span>
+            <span className="font-bold text-white text-xl md:text-2xl">90%</span>
           </p>
-          <p className="text-white/80 text-base md:text-lg mb-3">
+          <p className="text-white/80 text-sm md:text-base mb-2">
             if you just used{' '}
             <a
               href="https://availproject.org"
@@ -79,7 +79,7 @@ export function BusiestDaySlide({ busiestDay }: BusiestDaySlideProps) {
               Avail Nexus
             </a>
           </p>
-          <p className="text-white/60 text-sm md:text-base">
+          <p className="text-white/60 text-xs md:text-sm">
             A bridgeless experience for seamless cross-chain transfers
           </p>
         </motion.div>

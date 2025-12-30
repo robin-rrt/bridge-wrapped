@@ -30,7 +30,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
   // Prepare chart data
   const monthlyData = stats.monthlyActivity.map((m) => ({
     name: m.monthName.substring(0, 3),
-    bridges: m.count,
+    Bridges: m.count,
     volume: m.volumeUSD,
   }));
 
@@ -100,7 +100,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
                   {[...Array(userClass.rarity)].map((_, i) => (
                     <span
                       key={i}
-                      className="text-white/80 text-sm"
+                      className="text-base bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-600 bg-clip-text text-transparent"
                     >★</span>
                   ))}
                 </div>
@@ -109,49 +109,11 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </div>
         </motion.div>
 
-        {/* Stats Table */}
-        <motion.div
-          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-12 md:mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="grid grid-cols-2 divide-x divide-white/10">
-            <div className="p-6 text-center">
-              <p className="text-white/60 text-sm mb-2">Total Bridges</p>
-              <p className="text-3xl md:text-4xl font-bold text-white">
-                {formatNumber(stats.totalBridgingActions)}
-              </p>
-            </div>
-            <div className="p-6 text-center">
-              <p className="text-white/60 text-sm mb-2">Total Volume</p>
-              <p className="text-3xl md:text-4xl font-bold text-white">
-                {formatUSD(stats.totalVolumeUSD)}
-              </p>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
-            <div className="p-6 text-center">
-              <p className="text-white/60 text-sm mb-2">Top Source</p>
-              <p className="text-xl md:text-2xl font-semibold text-white">
-                {stats.mostUsedSourceChain?.chainName || 'N/A'}
-              </p>
-            </div>
-            <div className="p-6 text-center">
-              <p className="text-white/60 text-sm mb-2">Top Destination</p>
-              <p className="text-xl md:text-2xl font-semibold text-white">
-                {stats.mostUsedDestinationChain?.chainName || 'N/A'}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Charts */}
-        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 mb-12 md:mb-16 px-4 md:px-6">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 mb-12 md:mb-16 px-4 md:px-6">
           {/* Monthly Activity */}
           <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 md:p-6 lg:p-8 border border-white/10"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
@@ -174,7 +136,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
                   itemStyle={{ color: '#ffffff' }}
                 />
                 <Bar
-                  dataKey="bridges"
+                  dataKey="Bridges"
                   fill="url(#grayGradient)"
                   radius={[4, 4, 0, 0]}
                 />
@@ -196,7 +158,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
 
           {/* Destination Chains Pie */}
           <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 md:p-6 lg:p-8 border border-white/10"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.6 }}
@@ -234,6 +196,71 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
             </ResponsiveContainer>
           </motion.div>
         </div>
+
+        {/* Busiest Day */}
+        {stats.busiestDay && (
+          <motion.div
+            className="w-full max-w-4xl bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.9 }}
+          >
+            <p className="text-white/60 mb-2">Your Busiest Day</p>
+            <p className="text-2xl font-bold text-white mb-1">
+              {formatDate(stats.busiestDay.date)}
+            </p>
+            <p className="text-white/80">
+              You bridged{' '}
+              <span className="font-semibold text-white">
+                {stats.busiestDay.count} times
+              </span>{' '}
+              to{' '}
+              <span className="font-semibold text-white/90">
+                {stats.busiestDay.primaryDestination.chainName}
+              </span>
+            </p>
+          </motion.div>
+        )}
+
+        {/* Stats Table */}
+        <motion.div
+          className="w-full max-w-4xl mx-auto bg-white/10 rounded-xl backdrop-blur-sm border border-white/20 overflow-hidden mb-8 md:mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="grid grid-cols-2 divide-x divide-white/10">
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Total Bridges</p>
+              <p className="text-3xl md:text-4xl font-bold text-white">
+                {formatNumber(stats.totalBridgingActions)}
+              </p>
+            </div>
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Total Volume</p>
+              <p className="text-3xl md:text-4xl font-bold text-white">
+                {formatUSD(stats.totalVolumeUSD)}
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 grid grid-cols-2 divide-x divide-white/10">
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Top Source</p>
+              <p className="text-xl md:text-2xl font-semibold text-white">
+                {stats.mostUsedSourceChain?.chainName || 'N/A'}
+              </p>
+            </div>
+            <div className="p-6 text-center">
+              <p className="text-white/60 text-sm mb-2">Top Destination</p>
+              <p className="text-xl md:text-2xl font-semibold text-white">
+                {stats.mostUsedDestinationChain?.chainName || 'N/A'}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        
 
         {/* Provider Breakdown Table */}
         <motion.div
@@ -274,7 +301,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
 
           {/* Top Tokens */}
           <motion.div
-            className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 md:p-6 lg:p-8 border border-white/10"
+            className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 md:p-8 border border-white/10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 }}
@@ -308,30 +335,7 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
           </motion.div>
         </div>
 
-        {/* Busiest Day */}
-        {stats.busiestDay && (
-          <motion.div
-            className="w-full max-w-4xl bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10 text-center"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.9 }}
-          >
-            <p className="text-white/60 mb-2">Your Busiest Day</p>
-            <p className="text-2xl font-bold text-white mb-1">
-              {formatDate(stats.busiestDay.date)}
-            </p>
-            <p className="text-white/80">
-              You bridged{' '}
-              <span className="font-semibold text-white">
-                {stats.busiestDay.count} times
-              </span>{' '}
-              to{' '}
-              <span className="font-semibold text-white/90">
-                {stats.busiestDay.primaryDestination.chainName}
-              </span>
-            </p>
-          </motion.div>
-        )}
+        
       </div>
     </div>
   );

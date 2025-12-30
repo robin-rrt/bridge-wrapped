@@ -187,7 +187,7 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
       </div>
 
       {/* Navigation hints */}
-      <div className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 text-white/40 text-sm z-10">
+      <div className="absolute bottom-4 md:bottom-5 left-1/2 -translate-x-1/2 text-white/40 text-sm z-10">
         Tap or use arrow keys to navigate
       </div>
 

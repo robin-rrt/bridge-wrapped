@@ -12,7 +12,7 @@ export function IntroSlide({ year }: IntroSlideProps) {
   return (
     <SlideContainer gradient={SLIDE_GRADIENTS[SLIDE_TYPES.INTRO]}>
       <motion.div
-        className="space-y-10 md:space-y-12"
+        className="space-y-6 md:space-y-8"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.8, ease: 'easeOut' }}
@@ -24,7 +24,6 @@ export function IntroSlide({ year }: IntroSlideProps) {
           transition={{ delay: 0.4, duration: 0.6 }}
         >
           Bridge
-          <br />
           <span className="inline-block mt-3">Wrapped</span>
         </motion.h1>
         <motion.p
@@ -33,14 +32,13 @@ export function IntroSlide({ year }: IntroSlideProps) {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.7, duration: 0.6 }}
         >
-          <br/>
           {year}
           <br/>
         </motion.p>
       </motion.div>
 
       <motion.p
-        className="mt-20 md:mt-24 text-white/70 text-lg md:text-xl font-light"
+        className="mt-4 md:mt-6 text-white/70 text-base md:text-lg font-light"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.6 }}

@@ -72,7 +72,7 @@ Review each slide for:
 | `src/components/wrapped/slides/SlideContainer.tsx` | Container padding |
 | `src/app/page.tsx` | Main page vertical rhythm |
 | `src/components/wrapped/StatsSummary.tsx` | Grid gaps, card padding |
-| `src/components/wrapped/slides/*.tsx` | Internal spacing per slide |
+| `src/components/wrapped/slides/*.tsx` | Internal spacing per slide components |
 | `src/components/ui/StatCard.tsx` | Card internal padding |
 
 ---
