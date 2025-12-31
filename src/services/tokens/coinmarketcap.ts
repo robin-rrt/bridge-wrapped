@@ -63,15 +63,49 @@ class CoinMarketCapService {
   private cache: Map<string, { data: TokenInfo; timestamp: number }> = new Map();
   private cacheExpiry = 1000 * 60 * 60; // 1 hour cache
 
+  private isServer(): boolean {
+    return typeof window === 'undefined';
+  }
+
   private async fetchFromAPI(addresses: string[]): Promise<CoinMarketCapResponse | null> {
     try {
-      const response = await fetch('/api/token-info', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ addresses }),
-      });
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+      let response: Response;
+
+      if (this.isServer()) {
+        // On server-side, call CoinMarketCap API directly (we have access to the API key)
+        const apiKey = process.env.COINMARKETCAP_API_KEY;
+        if (!apiKey) {
+          console.warn('CoinMarketCap API key not configured');
+          return null;
+        }
+
+        response = await fetch(
+          `https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?address=${addresses.join(',')}`,
+          {
+            headers: {
+              'X-CMC_PRO_API_KEY': apiKey,
+              'Accept': 'application/json',
+            },
+            signal: controller.signal,
+          }
+        );
+      } else {
+        // On client-side, use the internal API endpoint to hide the API key
+        response = await fetch('/api/token-info', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ addresses }),
+          signal: controller.signal,
+        });
+      }
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -81,7 +115,11 @@ class CoinMarketCapService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching from token info API:', error);
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.warn('Token info API request timed out');
+      } else {
+        console.error('Error fetching from token info API:', error);
+      }
       return null;
     }
   }
@@ -126,7 +164,15 @@ class CoinMarketCapService {
       console.warn('CoinMarketCap API error for address:', lowerAddress, error);
     }
 
-    return null;
+    // Final fallback for truly unknown tokens - return basic info with address as symbol
+    // This ensures we always return something useful for the UI
+    const unknownTokenInfo: TokenInfo = {
+      symbol: address.slice(0, 6) + '...' + address.slice(-4),
+      name: 'Unknown Token',
+      decimals: 18,
+    };
+    this.cache.set(lowerAddress, { data: unknownTokenInfo, timestamp: Date.now() });
+    return unknownTokenInfo;
   }
 
   async getMultipleTokenInfo(addresses: string[]): Promise<Map<string, TokenInfo>> {
@@ -259,12 +305,8 @@ class CoinMarketCapService {
       };
     }
 
-    // If no fallback found, return address as symbol
-    return {
-      symbol: address,
-      name: 'Unknown Token',
-      decimals: 18, // Default to 18 decimals
-    };
+    // No fallback found - return null to trigger API call
+    return null;
   }
 
   private getDecimalsForToken(symbol: string): number {
@@ -276,14 +318,6 @@ class CoinMarketCapService {
 
     // Most other tokens use 18 decimals
     return 18;
-  }
-
-  private chunkArray<T>(array: T[], chunkSize: number): T[][] {
-    const chunks: T[][] = [];
-    for (let i = 0; i < array.length; i += chunkSize) {
-      chunks.push(array.slice(i, i + chunkSize));
-    }
-    return chunks;
   }
 
   clearCache(): void {
