@@ -57,39 +57,45 @@ export function classifyUser(
   // Calculate average transaction volume
   const avgTxVolume = txCount > 0 ? totalVolumeUSD / txCount : 0;
 
-  // Crosschain noob: < 10 txns, each txn volume is < $10,000, and cumulative volume is < $20,000
-  if (txCount < 10 && avgTxVolume < 10000 && totalVolumeUSD < 20000) {
+  // Crosschain noob: < 10 txns, each txn volume is < $5,000, and cumulative volume is < $20,000
+  if (txCount < 10 && avgTxVolume < 5000 && totalVolumeUSD < 20000) {
     return {
       class: 'crosschain-noob',
       ...USER_CLASS_DATA['crosschain-noob'],
     };
   }
 
-  // Working Elf: > 50 txns, each txn volume is < $10,000, and cumulative volume is < $20,000
-  if (txCount > 50 && avgTxVolume < 10000 && totalVolumeUSD < 20000) {
+  // Working Elf: > 30 txns, each txn volume is < $5,000, and cumulative volume is < $20,000
+  if (txCount > 30 && avgTxVolume < 5000 && totalVolumeUSD < 20000) {
     return {
       class: 'working-elf',
       ...USER_CLASS_DATA['working-elf'],
     };
   }
 
-  // Calculated Whale: < 20 txns, each txn volume is > $10,000, and cumulative volume is > $20,000
-  if (txCount < 20 && avgTxVolume > 10000 && totalVolumeUSD > 20000) {
+  // Calculated Whale: < 30 txns, and cumulative volume is > $20,000
+  if (txCount < 30 && totalVolumeUSD > 20000) {
     return {
       class: 'calculated-whale',
       ...USER_CLASS_DATA['calculated-whale'],
     };
   }
 
-  // The Farmer Whale: > 20 txns, each txn volume is > $10,000, and cumulative volume is > $20,000
-  if (txCount > 20 && avgTxVolume > 10000 && totalVolumeUSD > 20000) {
+  // The Farmer Whale: > 30 txns, and cumulative volume is > $20,000
+  if (txCount > 30 && totalVolumeUSD > 20000) {
     return {
       class: 'farmer-whale',
       ...USER_CLASS_DATA['farmer-whale'],
     };
   }
 
-  // The Standard Joe: > 10 txns, each txn volume is < $10,000, and cumulative volume is < $20,000,
+  // The Standard Joe: > 10 txns, each txn volume is < $5,000, and cumulative volume is < $20,000,
+  if (txCount > 10 && avgTxVolume < 5000 && totalVolumeUSD < 20000) {
+    return {
+      class: 'standard-joe',
+      ...USER_CLASS_DATA['standard-joe'],
+    };
+  }
   // or does not fit in the other categories
   return {
     class: 'standard-joe',
