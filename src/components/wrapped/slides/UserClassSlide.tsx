@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { SlideContainer } from './SlideContainer';
 import { AnimatedCounter } from '@/components/ui/AnimatedCounter';
-import { formatNumber, formatUSD } from '@/lib/utils';
+import { formatNumber, formatUSD, truncateAddress } from '@/lib/utils';
+import { useEnsName } from '@/hooks/useEnsName';
 import type { UserClassInfo } from '@/lib/userClassification';
 
 interface UserClassSlideProps {
@@ -12,6 +13,7 @@ interface UserClassSlideProps {
   totalBridges: number;
   totalVolumeUSD: number;
   avgTransactionVolume: number;
+  walletAddress: string;
 }
 
 export function UserClassSlide({
@@ -19,7 +21,10 @@ export function UserClassSlide({
   totalBridges,
   totalVolumeUSD,
   avgTransactionVolume,
+  walletAddress,
 }: UserClassSlideProps) {
+  // Resolve ENS name
+  const ensName = useEnsName(walletAddress);
   return (
     <SlideContainer gradient="from-neutral-950 via-neutral-900 to-neutral-950">
       <div className="flex flex-col items-center space-y-2 md:space-y-3">
@@ -52,6 +57,21 @@ export function UserClassSlide({
                 >
                   {userClass.title}
                 </motion.h2>
+                <motion.div
+                  className="text-center mt-1"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.9 }}
+                >
+                  <p className="text-white/70 text-xs">
+                    {ensName || truncateAddress(walletAddress, 6)}
+                  </p>
+                  {ensName && (
+                    <p className="text-white/50 text-[10px] mt-0.5">
+                      {truncateAddress(walletAddress, 6)}
+                    </p>
+                  )}
+                </motion.div>
               </div>
 
               {/* Card Image */}
