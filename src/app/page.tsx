@@ -1,21 +1,28 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
+import { getEnsAddress } from 'viem/ens';
+import { createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConnectButton } from '@/components/wallet/ConnectButton';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { WrappedContainer, StatsSummary } from '@/components/wrapped';
 import { useBridgeStatsQuery } from '@/hooks/useBridgeStats';
 import { WRAPPED_YEAR } from '@/lib/constants';
+import { isPotentialEnsName, isValidAddress } from '@/lib/utils';
 
 type ViewMode = 'landing' | 'loading' | 'wrapped' | 'summary' | 'no-data';
 
 export default function Home() {
   const { address, isConnected } = useAccount();
+  const publicClient = usePublicClient();
   const [manualViewMode, setManualViewMode] = useState<ViewMode | null>(null);
   const [manualAddress, setManualAddress] = useState('');
   const [queryAddress, setQueryAddress] = useState<string | undefined>();
+  const [isResolvingEns, setIsResolvingEns] = useState(false);
+  const [ensError, setEnsError] = useState<string | null>(null);
 
   const { data: stats, isLoading, error } = useBridgeStatsQuery(
     queryAddress,
@@ -63,13 +70,58 @@ export default function Home() {
     }
   }, [address]);
 
-  const handleManualSubmit = useCallback((e: React.FormEvent) => {
+  const handleManualSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (manualAddress && /^0x[a-fA-F0-9]{40}$/.test(manualAddress)) {
-      setQueryAddress(manualAddress);
-      setManualViewMode(null);
+    if (!manualAddress.trim()) return;
+
+    setEnsError(null);
+    let resolvedAddress: string | null = null;
+
+    // Check if input is a valid address
+    if (isValidAddress(manualAddress.trim())) {
+      resolvedAddress = manualAddress.trim();
+    } 
+    // Check if input looks like an ENS name
+    else if (isPotentialEnsName(manualAddress.trim())) {
+      setIsResolvingEns(true);
+      try {
+        // Use wagmi's public client if available, otherwise create one for mainnet
+        const client = publicClient || createPublicClient({
+          chain: mainnet,
+          transport: http(),
+        });
+
+        const address = await getEnsAddress(client, {
+          name: manualAddress.trim().toLowerCase(),
+        });
+        
+        if (!address) {
+          setEnsError(`ENS name "${manualAddress.trim()}" could not be resolved. Please check the name and try again.`);
+          setIsResolvingEns(false);
+          return;
+        }
+        
+        resolvedAddress = address;
+      } catch (err) {
+        console.error('ENS resolution error:', err);
+        setEnsError(`Failed to resolve ENS name "${manualAddress.trim()}". Please check the name or use an address instead.`);
+        setIsResolvingEns(false);
+        return;
+      } finally {
+        setIsResolvingEns(false);
+      }
+    } else {
+      setEnsError('Please enter a valid Ethereum address (0x...) or ENS name (e.g., name.eth)');
+      return;
     }
-  }, [manualAddress]);
+
+    // If we have a resolved address, set it and proceed
+    if (resolvedAddress) {
+      setQueryAddress(resolvedAddress);
+      setManualViewMode(null);
+      setEnsError(null);
+    }
+  }, [manualAddress, publicClient]);
 
   const handleViewSummary = useCallback(() => {
     setManualViewMode('summary');
@@ -83,6 +135,8 @@ export default function Home() {
     setQueryAddress(undefined);
     setManualAddress('');
     setManualViewMode(null);
+    setEnsError(null);
+    setIsResolvingEns(false);
   }, []);
 
   return (
@@ -138,7 +192,7 @@ export default function Home() {
               ) : (
                 <div className="space-y-6">
                   <p className="text-white/60">
-                    Connect your wallet or enter an address
+                    Connect your wallet or enter an address or ENS name
                   </p>
 
                   <ConnectButton />
@@ -154,19 +208,47 @@ export default function Home() {
                     onSubmit={handleManualSubmit}
                     className="flex flex-col sm:flex-row gap-4 md:gap-5 max-w-md mx-auto"
                   >
-                    <input
-                      type="text"
-                      placeholder="0x..."
-                      value={manualAddress}
-                      onChange={(e) => setManualAddress(e.target.value)}
-                      className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors"
-                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="0x... or name.eth"
+                        value={manualAddress}
+                        onChange={(e) => {
+                          setManualAddress(e.target.value);
+                          setEnsError(null);
+                        }}
+                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors"
+                        disabled={isResolvingEns}
+                      />
+                      {ensError && (
+                        <motion.p
+                          className="mt-2 text-red-400 text-sm"
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                        >
+                          {ensError}
+                        </motion.p>
+                      )}
+                      {isResolvingEns && (
+                        <motion.p
+                          className="mt-2 text-white/60 text-sm"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                        >
+                          Resolving ENS name...
+                        </motion.p>
+                      )}
+                    </div>
                     <button
                       type="submit"
-                      disabled={!/^0x[a-fA-F0-9]{40}$/.test(manualAddress)}
-                      className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      disabled={
+                        !manualAddress.trim() ||
+                        isResolvingEns ||
+                        (!isValidAddress(manualAddress.trim()) && !isPotentialEnsName(manualAddress.trim()))
+                      }
+                      className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-medium hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     >
-                      Look up
+                      {isResolvingEns ? 'Resolving...' : 'Look up'}
                     </button>
                   </form>
                 </div>
