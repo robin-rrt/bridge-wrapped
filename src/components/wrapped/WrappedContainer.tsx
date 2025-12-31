@@ -149,6 +149,7 @@ export function WrappedContainer({ stats, onComplete }: WrappedContainerProps) {
             totalBridges={stats.totalBridgingActions}
             totalVolumeUSD={stats.totalVolumeUSD}
             avgTransactionVolume={avgTransactionVolume}
+            walletAddress={stats.walletAddress}
           />
         );
       case 'availNexus':
