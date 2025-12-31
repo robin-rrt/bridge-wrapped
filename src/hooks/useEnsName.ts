@@ -17,9 +17,13 @@ export function useEnsName(address: string | undefined): string | null {
   const [ensName, setEnsName] = useState<string | null>(null);
 
   useEffect(() => {
+    // Early return for invalid addresses - reset state asynchronously
     if (!address || !isValidAddress(address)) {
-      setEnsName(null);
-      return;
+      // Use setTimeout to avoid synchronous setState in effect
+      const timeoutId = setTimeout(() => {
+        setEnsName(null);
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
 
     let cancelled = false;
@@ -39,7 +43,7 @@ export function useEnsName(address: string | undefined): string | null {
         if (!cancelled) {
           setEnsName(name);
         }
-      } catch (error) {
+      } catch {
         // Silently fail - ENS resolution is optional
         if (!cancelled) {
           setEnsName(null);
