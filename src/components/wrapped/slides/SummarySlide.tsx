@@ -6,6 +6,7 @@ import { SlideContainer } from './SlideContainer';
 import { SLIDE_GRADIENTS, SLIDE_TYPES } from '@/lib/constants';
 import { formatNumber, formatUSD, truncateAddress } from '@/lib/utils';
 import { classifyUser } from '@/lib/userClassification';
+import { useEnsName } from '@/hooks/useEnsName';
 import type { BridgeWrappedStats } from '@/types';
 
 interface SummarySlideProps {
@@ -14,6 +15,8 @@ interface SummarySlideProps {
 
 export function SummarySlide({ stats }: SummarySlideProps) {
   const userClass = classifyUser(stats.transactions, stats.totalVolumeUSD);
+  // Resolve ENS name
+  const ensName = useEnsName(stats.walletAddress);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -43,9 +46,16 @@ export function SummarySlide({ stats }: SummarySlideProps) {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
             Your {stats.year} Recap
           </h2>
-          <p className="text-white/60 text-sm md:text-base">
-            {truncateAddress(stats.walletAddress, 6)}
-          </p>
+          <div className="flex flex-col items-center">
+            <p className="text-white/60 text-sm md:text-base">
+              {ensName || truncateAddress(stats.walletAddress, 6)}
+            </p>
+            {ensName && (
+              <p className="text-white/40 text-xs mt-1">
+                {truncateAddress(stats.walletAddress, 6)}
+              </p>
+            )}
+          </div>
         </motion.div>
 
         {/* User Class Card - Compact with breathing room */}

@@ -17,6 +17,7 @@ import type { BridgeWrappedStats } from '@/types';
 import { formatNumber, formatUSD, truncateAddress, formatDate } from '@/lib/utils';
 import { getChainColor } from '@/services/chains/chainInfo';
 import { classifyUser } from '@/lib/userClassification';
+import { useEnsName } from '@/hooks/useEnsName';
 
 interface StatsSummaryProps {
   stats: BridgeWrappedStats;
@@ -26,6 +27,8 @@ interface StatsSummaryProps {
 export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
   // Calculate user class
   const userClass = classifyUser(stats.transactions, stats.totalVolumeUSD);
+  // Resolve ENS name
+  const ensName = useEnsName(stats.walletAddress);
 
   // Prepare chart data
   const monthlyData = stats.monthlyActivity.map((m) => ({
@@ -54,8 +57,13 @@ export function StatsSummary({ stats, onViewWrapped }: StatsSummaryProps) {
             Bridge Wrapped {stats.year}
           </h1>
           <p className="text-white/60">
-            {truncateAddress(stats.walletAddress, 8)}
+            {ensName || truncateAddress(stats.walletAddress, 8)}
           </p>
+          {ensName && (
+            <p className="text-white/40 text-sm mt-1">
+              {truncateAddress(stats.walletAddress, 8)}
+            </p>
+          )}
           <button
             onClick={onViewWrapped}
             className="mt-4 px-6 py-2 bg-white text-black rounded-full hover:bg-white/90 transition-all font-medium"

@@ -161,3 +161,15 @@ export function getOrdinalSuffix(n: number): string {
   const v = n % 100;
   return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
+
+// Check if a string looks like an ENS name (contains a dot)
+export function isPotentialEnsName(input: string): boolean {
+  // ENS names contain at least one dot
+  // We check for dots but not at the start/end
+  return input.includes('.') && !input.startsWith('.') && !input.endsWith('.');
+}
+
+// Check if a string is a valid Ethereum address
+export function isValidAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
